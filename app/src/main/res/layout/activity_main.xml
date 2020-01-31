@@ -1,18 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <variable
+            name="viewModel"
+            type="yu.kutsuna.todoapp.MainViewModel" />
+
+        <import type="java.lang.Integer" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray"
+        tools:context=".MainActivity">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/colorPrimary"
+            android:textSize="48sp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/main_area" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_area"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="40dp"
+            android:background="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/all_select_button"
+                android:layout_width="30dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:visibility="@{viewModel.isListExist()? View.VISIBLE : View.GONE}"
+                android:text="@string/all_select_button"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/gray"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/todo_text"
+                app:layout_constraintBottom_toBottomOf="@id/todo_text"/>
+
+            <EditText
+                android:id="@+id/todo_text"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:hint="@string/add_todo_text_hint"
+                android:textColorHint="@color/gray"
+                app:layout_constraintStart_toEndOf="@id/all_select_button"
+                app:layout_constraintEnd_toStartOf="@id/add_button"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/divider"/>
+
+            <Button
+                android:id="@+id/add_button"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:text="@string/add"
+                android:visibility="@{viewModel.isEmptyAddText()? View.GONE : View.VISIBLE}"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/todo_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/todo_text"
+                app:layout_constraintBottom_toTopOf="@id/divider"/>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:background="@color/gray"
+                android:visibility="@{viewModel.isListExist()? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/todo_text"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="@{viewModel.isListExist()? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                app:layout_constraintBottom_toTopOf="@id/main_footer"/>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/main_footer"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:visibility="@{viewModel.isListExist()? View.VISIBLE : View.GONE}"
+                app:layout_constraintTop_toBottomOf="@id/recycler_view"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guide"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintGuide_percent="0.5"
+                    android:orientation="vertical"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:background="@color/gray"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/item_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:textSize="12sp"
+                    tools:text="4 items left"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:id="@+id/all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/all"
+                    android:layout_margin="16dp"
+                    app:layout_constraintEnd_toStartOf="@id/active"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:id="@+id/active"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/active"
+                    android:layout_margin="16dp"
+                    app:layout_constraintStart_toStartOf="@id/guide"
+                    app:layout_constraintEnd_toEndOf="@id/guide"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:id="@+id/completed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/completed"
+                    android:layout_margin="16dp"
+                    app:layout_constraintStart_toEndOf="@id/active"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">ToDoApp</string>
+    <string name="all_select_button">∨</string>
+    <string name="add_todo_text_hint">"  What need to be done?"</string>
+    <string name="all">"All"</string>
+    <string name="active">"Active"</string>
+    <string name="completed">"Completed"</string>
+    <string name="add">"add"</string>
 </resources>

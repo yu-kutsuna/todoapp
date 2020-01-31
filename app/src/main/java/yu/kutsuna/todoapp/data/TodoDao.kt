@@ -5,14 +5,14 @@ import androidx.room.*
 @Dao
 interface TodoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addTodo(value: String)
+    fun addTodo(todo: Todo)
 
     @Query("SELECT * From Todo")
     fun findAll(): List<Todo>
 
     @Update
-    fun updateCompleted(isCompleted: Boolean, id: Long)
+    fun updateCompleted(todo: Todo)
 
     @Delete
-    fun delete(id: Long)
+    fun delete(todo: Todo)
 }
