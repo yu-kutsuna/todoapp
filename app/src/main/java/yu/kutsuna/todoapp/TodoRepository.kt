@@ -6,4 +6,8 @@ class TodoRepository {
     fun getTodoList(): List<Todo> {
         return TodoApplication.database.todoDao().findAll()
     }
+
+    fun addTodo(todo: Todo) {
+        TodoApplication.database.todoDao().addTodo(todo)
+    }
 }
