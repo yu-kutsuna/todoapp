@@ -1,5 +1,6 @@
 package yu.kutsuna.todoapp
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import yu.kutsuna.todoapp.data.Todo
@@ -20,7 +21,7 @@ class MainViewModel: ViewModel() {
         isEmptyAddText.value = text.isNullOrEmpty()
     }
 
-    fun clickAddButton() {
+    fun clickAddButton(view: View) {
         todoRepository.addTodo(Todo(0, textValue.toString(), false))
         updateList()
     }

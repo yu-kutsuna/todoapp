@@ -76,7 +76,7 @@
                 android:text="@string/add"
                 android:visibility="@{viewModel.isEmptyAddText()? View.GONE : View.VISIBLE}"
                 android:layout_marginStart="10dp"
-                android:onClick="@{viewModel.clickAddButton()}"
+                android:onClick="@{viewModel::clickAddButton}"
                 app:layout_constraintStart_toEndOf="@id/todo_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/todo_text"
