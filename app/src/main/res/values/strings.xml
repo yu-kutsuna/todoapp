@@ -6,4 +6,5 @@
     <string name="active">"Active"</string>
     <string name="completed">"Completed"</string>
     <string name="add">"add"</string>
+    <string name="delete">"×"</string>
 </resources>

@@ -9,8 +9,6 @@
             name="viewModel"
             type="yu.kutsuna.todoapp.MainViewModel" />
 
-        <import type="java.lang.Integer" />
-
         <import type="android.view.View" />
     </data>
 
@@ -64,6 +62,8 @@
                 android:layout_height="40dp"
                 android:hint="@string/add_todo_text_hint"
                 android:textColorHint="@color/gray"
+                android:maxLines="1"
+                android:minLines="1"
                 app:layout_constraintStart_toEndOf="@id/all_select_button"
                 app:layout_constraintEnd_toStartOf="@id/add_button"
                 app:layout_constraintTop_toTopOf="parent"
