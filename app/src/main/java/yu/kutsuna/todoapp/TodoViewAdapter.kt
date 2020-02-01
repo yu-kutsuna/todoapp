@@ -1,6 +1,7 @@
 package yu.kutsuna.todoapp
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import yu.kutsuna.todoapp.data.Todo
 
-class TodoViewAdapter(private val context: Context, private val todoList: List<Todo>): RecyclerView.Adapter<TodoViewAdapter.TodoViewHolder>() {
+class TodoViewAdapter(private val context: Context, private var todoList: List<Todo>): RecyclerView.Adapter<TodoViewAdapter.TodoViewHolder>() {
 
     class TodoViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val checkBox: CheckBox = view.findViewById(R.id.checkbox)
@@ -26,5 +27,11 @@ class TodoViewAdapter(private val context: Context, private val todoList: List<T
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         holder.todoValue.text = todoList[position].value
+    }
+
+    fun update(todoList: List<Todo>) {
+        Log.d("test", "TodoViewAdapter updateList!")
+        this.todoList = todoList
+        notifyDataSetChanged()
     }
 }

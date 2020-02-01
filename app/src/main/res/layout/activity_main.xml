@@ -133,8 +133,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    android:text="@{viewModel.itemCountText}"
                     android:textSize="12sp"
-                    tools:text="4 items left"
+                    tools:text="4 items"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>

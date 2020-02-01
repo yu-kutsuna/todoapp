@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         binding = (DataBindingUtil.setContentView(this, R.layout.activity_main) as ActivityMainBinding).apply {
+            lifecycleOwner = this@MainActivity
             viewModel = myViewModel
             todoText.addTextChangedListener(object: TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
@@ -40,8 +41,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         myViewModel.todoList.observe(this, Observer { todoList ->
-            binding.recyclerView.adapter = TodoViewAdapter(this, todoList)
-            binding.recyclerView.layoutManager = LinearLayoutManager(this)
+            if(binding.recyclerView.adapter == null) {
+                binding.recyclerView.adapter = TodoViewAdapter(this, todoList)
+                binding.recyclerView.layoutManager = LinearLayoutManager(this)
+            } else {
+                (binding.recyclerView.adapter as TodoViewAdapter).update(todoList)
+            }
         })
     }
 }
