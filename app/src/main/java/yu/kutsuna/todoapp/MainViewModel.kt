@@ -13,6 +13,7 @@ import yu.kutsuna.todoapp.data.Todo
 class MainViewModel: ViewModel() {
     var isListExist: MutableLiveData<Boolean> = MutableLiveData()
     var isEmptyAddText: MutableLiveData<Boolean> = MutableLiveData()
+    var isAllSelectClicked: MutableLiveData<Boolean> = MutableLiveData()
     var todoList: MutableLiveData<List<Todo>> = MutableLiveData()
     var itemCountText: MutableLiveData<String> = MutableLiveData()
     private var textValue: CharSequence? = null
@@ -20,6 +21,7 @@ class MainViewModel: ViewModel() {
 
     fun init() {
         isEmptyAddText.value = true
+        isAllSelectClicked.value = false
         updateList()
     }
 
@@ -58,6 +60,12 @@ class MainViewModel: ViewModel() {
                 }
             }
             Log.d("test", "isListExist ${isListExist.value}" )
+        }
+    }
+
+    fun clickAllSelect(view: View) {
+        isAllSelectClicked.value?.let {
+            isAllSelectClicked.value = !it
         }
     }
 }

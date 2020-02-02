@@ -34,4 +34,8 @@ class TodoViewAdapter(private val context: Context, private var todoList: List<T
         this.todoList = todoList
         notifyDataSetChanged()
     }
+
+    fun allSelect() {
+
+    }
 }

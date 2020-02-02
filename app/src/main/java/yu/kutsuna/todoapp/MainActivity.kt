@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -46,6 +47,14 @@ class MainActivity : AppCompatActivity() {
                 binding.recyclerView.layoutManager = LinearLayoutManager(this)
             } else {
                 (binding.recyclerView.adapter as TodoViewAdapter).update(todoList)
+            }
+        })
+        myViewModel.isAllSelectClicked.observe(this, Observer { isClicked ->
+            if(isClicked) {
+                myViewModel.todoList.value?.forEachIndexed{ index , todo ->
+                    (binding.recyclerView.findViewHolderForItemId(index.toLong()) as TodoViewAdapter.TodoViewHolder).checkBox.isChecked = true
+                }
+                binding.recyclerView.adapter?.notifyDataSetChanged()
             }
         })
     }
