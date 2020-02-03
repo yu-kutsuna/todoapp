@@ -39,7 +39,16 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.init()
     }
 
+    /**
+     * LiveData監視開始
+     */
     private fun observeViewModel() {
+        /**
+         * リストに変更が加わった時の処理
+         * RecyclerViewのアダプターがnullの場合は初期処理をし、
+         * 存在している場合はアップデートのみ行う
+         * また、リスト更新時にはキーボードを隠す
+         */
         mainViewModel.todoList.observe(this, Observer { todoList ->
             if(binding.recyclerView.adapter == null) {
                 binding.lifecycleOwner?.let {
@@ -53,6 +62,10 @@ class MainActivity : AppCompatActivity() {
             hideKeyboard()
         })
 
+        /**
+         * 全選択ボタン押下時の処理
+         * RecyclerView.Adapterから全選択を行う
+         */
         mainViewModel.isAllSelectClicked.observe(this, Observer {
             binding.recyclerView.adapter?.let {
                 (it as TodoViewAdapter).allSelect()

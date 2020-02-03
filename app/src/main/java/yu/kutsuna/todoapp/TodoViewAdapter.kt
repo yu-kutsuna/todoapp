@@ -1,15 +1,10 @@
 package yu.kutsuna.todoapp
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.databinding.TodoRowItemBinding
@@ -20,6 +15,13 @@ class TodoViewAdapter(private var todoList: List<Todo>,
 ): RecyclerView.Adapter<TodoViewAdapter.TodoViewHolder>() {
 
     class TodoViewHolder(val binding: TodoRowItemBinding): RecyclerView.ViewHolder(binding.root)
+
+    enum class AllSelectType {
+        NONE,
+        ALL_SELECT,
+        ALL_CLEAR
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -39,14 +41,42 @@ class TodoViewAdapter(private var todoList: List<Todo>,
         holder.binding.todo = todoList[position]
         holder.binding.viewModel = TodoRowViewModel(todoList[position].id.toString(), parentViewModel)
         holder.binding.lifecycleOwner = parentLifecycleOwner
-        holder.binding.checkBox.isChecked = isAllSelected
-        holder.binding.viewModel?.let{ todoRowViewModel ->
-            todoRowViewModel.isDeleted.observe(parentLifecycleOwner, Observer { isDeleted ->
-                if(isDeleted) {
-                    update(todoRowViewModel.todoList)
-                    todoRowViewModel.isDeleted.value = false
+
+        /**
+         * チェックボックスの状態変更時の処理
+         * チェックされたアイテムのIDのリストをMainViewModelで保持する
+         * また、全てのチェックが外れた時にクリアボタンを非表示にし、
+         * アイテムが一つでもチェックされた時にクリアボタンを表示する
+         */
+        holder.binding.checkBox.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked) {
+                parentViewModel.checkedIdList.add(todoList[position].id.toString())
+            } else {
+                run loop@ {
+                    parentViewModel.checkedIdList.forEachIndexed { index, id ->
+                        if (id == todoList[position].id.toString()) {
+                            parentViewModel.checkedIdList.removeAt(index)
+                            return@loop
+                        }
+                    }
                 }
-            })
+            }
+
+            parentViewModel.isItemChecking.value = parentViewModel.checkedIdList.isNotEmpty()
+        }
+
+        /**
+         * 全選択処理
+         * 一つでも選択されている場合は選択されていないチェックボックスを選択済みにする
+         * 全て選択されている場合は全てのチェックボックスの選択を解除する
+         */
+        when(allSelectType) {
+            AllSelectType.ALL_SELECT -> holder.binding.checkBox.isChecked = true
+            AllSelectType.ALL_CLEAR -> holder.binding.checkBox.isChecked = false
+            AllSelectType.NONE -> Unit
+        }
+        if(position + 1 == todoList.size) {
+            allSelectType = AllSelectType.NONE
         }
     }
 
@@ -57,11 +87,16 @@ class TodoViewAdapter(private var todoList: List<Todo>,
     }
 
     fun allSelect() {
-        isAllSelected = !isAllSelected
+        allSelectType = if(parentViewModel.checkedIdList.size < todoList.size) {
+            AllSelectType.ALL_SELECT
+        } else {
+            AllSelectType.ALL_CLEAR
+        }
         notifyDataSetChanged()
     }
 
     companion object {
-        var isAllSelected = false
+        private const val TAG = "TodoViewAdapter"
+        var allSelectType = AllSelectType.NONE
     }
 }

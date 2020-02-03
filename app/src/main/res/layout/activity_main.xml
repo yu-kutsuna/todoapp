@@ -35,7 +35,7 @@
             android:id="@+id/main_area"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="40dp"
+            android:layout_margin="20dp"
             android:background="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -114,13 +114,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guide"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintGuide_percent="0.5"
-                    android:orientation="vertical"/>
-
                 <View
                     android:layout_width="0dp"
                     android:layout_height="2dp"
@@ -133,42 +126,60 @@
                     android:id="@+id/item_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_margin="4dp"
                     android:text="@{viewModel.itemCountText}"
                     android:textSize="12sp"
                     tools:text="4 items"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/all"/>
 
                 <TextView
                     android:id="@+id/all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
                     android:text="@string/all"
-                    android:layout_margin="16dp"
-                    app:layout_constraintEnd_toStartOf="@id/active"
+                    android:gravity="center"
+                    android:onClick="@{viewModel::clickAll}"
+                    app:layout_constraintStart_toEndOf="@id/item_count"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/active"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <TextView
                     android:id="@+id/active"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
                     android:text="@string/active"
-                    android:layout_margin="16dp"
-                    app:layout_constraintStart_toStartOf="@id/guide"
-                    app:layout_constraintEnd_toEndOf="@id/guide"
+                    android:gravity="center"
+                    android:onClick="@{viewModel::clickActive}"
+                    app:layout_constraintStart_toEndOf="@id/active"
+                    app:layout_constraintEnd_toStartOf="@id/completed"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <TextView
                     android:id="@+id/completed"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:gravity="center"
                     android:text="@string/completed"
-                    android:layout_margin="16dp"
+                    android:onClick="@{viewModel::clickCompleted}"
                     app:layout_constraintStart_toEndOf="@id/active"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/clear_completed"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:id="@+id/clear_completed"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:text="@string/clear_completed"
+                    android:visibility="@{viewModel.isItemChecking()? View.VISIBLE : View.INVISIBLE}"
+                    app:layout_constraintStart_toEndOf="@id/completed"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 

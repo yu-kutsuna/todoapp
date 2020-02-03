@@ -4,14 +4,30 @@ import yu.kutsuna.todoapp.data.Todo
 
 class TodoRepository {
     fun getTodoList(): List<Todo> {
-        return TodoApplication.database.todoDao().findAll()
+        return db.findAll()
+    }
+
+    fun getActiveTodoList(): List<Todo> {
+        return db.findActive()
+    }
+
+    fun getCompletedTodoList(): List<Todo> {
+        return db.findCompleted()
+    }
+
+    fun updateCompleted(todo: Todo) {
+        db.updateCompleted(todo)
     }
 
     fun addTodo(todo: Todo) {
-        TodoApplication.database.todoDao().addTodo(todo)
+        db.addTodo(todo)
     }
 
     fun deleteTodo(id: String) {
-        TodoApplication.database.todoDao().delete(id)
+        db.delete(id)
+    }
+
+    companion object {
+        private val db = TodoApplication.database.todoDao()
     }
 }

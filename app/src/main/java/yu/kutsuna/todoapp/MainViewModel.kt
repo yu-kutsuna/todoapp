@@ -11,13 +11,20 @@ import kotlinx.coroutines.withContext
 import yu.kutsuna.todoapp.data.Todo
 
 class MainViewModel: ViewModel() {
+    enum class SelectedType {
+        ALL, ACTIVE, COMPLETED
+    }
+
+    var selectedType = SelectedType.ALL
     var isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var isEmptyAddText: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var isAllSelectClicked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var isViewingDeleteDialog: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    var isItemChecking: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var todoList: MutableLiveData<List<Todo>> = MutableLiveData()
     var itemCountText: MutableLiveData<String> = MutableLiveData()
+    var checkedIdList: MutableList<String> = mutableListOf()
     private lateinit var deleteId: String
     private var textValue: CharSequence? = null
     private val todoRepository = TodoRepository()
@@ -27,7 +34,6 @@ class MainViewModel: ViewModel() {
     }
 
     fun addText(text: CharSequence?) {
-        Log.d("test", "addText $text" )
         textValue = text
         isEmptyAddText.value = text.isNullOrEmpty()
     }
@@ -49,14 +55,21 @@ class MainViewModel: ViewModel() {
             isLoading.value = true
             todoList.value  =
                 withContext(Dispatchers.Default) {
-                    todoRepository.getTodoList().reversed()
+                    when(selectedType) {
+                        SelectedType.ALL -> getAllTodoList()
+                        SelectedType.ACTIVE -> getActiveTodoList()
+                        SelectedType.COMPLETED -> getCompletedTodoList()
+                    }
                 }
-            todoList.value?.let {
-                if(it.isNullOrEmpty()) {
-                    isListExist.value = false
-                } else {
-                    isListExist.value = true
-                    itemCountText.value = "${it.size} items"
+
+            if(selectedType == SelectedType.ALL) {
+                todoList.value?.let {
+                    if (it.isNullOrEmpty()) {
+                        isListExist.value = false
+                    } else {
+                        isListExist.value = true
+                        itemCountText.value = "${it.size} items"
+                    }
                 }
             }
             isLoading.value = false
@@ -89,5 +102,32 @@ class MainViewModel: ViewModel() {
 
     fun clickDeleteDialogNo(view: View) {
         isViewingDeleteDialog.value = false
+    }
+
+    fun clickAll(view: View) {
+        selectedType = SelectedType.ALL
+        updateList()
+    }
+
+    fun clickActive(view: View) {
+        selectedType = SelectedType.ACTIVE
+        updateList()
+    }
+
+    fun clickCompleted(view: View) {
+        selectedType = SelectedType.COMPLETED
+        updateList()
+    }
+
+    private fun getAllTodoList(): List<Todo> {
+        return todoRepository.getTodoList().reversed()
+    }
+
+    private fun getActiveTodoList(): List<Todo> {
+        return todoRepository.getActiveTodoList().reversed()
+    }
+
+    private fun getCompletedTodoList(): List<Todo> {
+        return todoRepository.getCompletedTodoList().reversed()
     }
 }
