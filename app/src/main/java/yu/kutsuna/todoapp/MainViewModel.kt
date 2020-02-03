@@ -62,16 +62,13 @@ class MainViewModel: ViewModel() {
                     }
                 }
 
-            if(selectedType == SelectedType.ALL) {
-                todoList.value?.let {
-                    if (it.isNullOrEmpty()) {
-                        isListExist.value = false
-                    } else {
-                        isListExist.value = true
-                        itemCountText.value = "${it.size} items"
-                    }
+            todoList.value?.let {
+                if(selectedType == SelectedType.ALL) {
+                    isListExist.value = !it.isNullOrEmpty()
                 }
+                itemCountText.value = "${it.size} items"
             }
+
             isLoading.value = false
             Log.d("test", "isListExist ${isListExist.value}" )
         }
@@ -117,6 +114,19 @@ class MainViewModel: ViewModel() {
     fun clickCompleted(view: View) {
         selectedType = SelectedType.COMPLETED
         updateList()
+    }
+
+    fun clickClear(view: View) {
+        GlobalScope.launch(Dispatchers.Main) {
+            isLoading.value = true
+            withContext(Dispatchers.Default) {
+                checkedIdList.forEach {
+                    todoRepository.updateCompleted(it)
+                }
+            }
+            isLoading.value = false
+            updateList()
+        }
     }
 
     private fun getAllTodoList(): List<Todo> {

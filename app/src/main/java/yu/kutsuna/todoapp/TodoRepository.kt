@@ -15,8 +15,8 @@ class TodoRepository {
         return db.findCompleted()
     }
 
-    fun updateCompleted(todo: Todo) {
-        db.updateCompleted(todo)
+    fun updateCompleted(id: String) {
+        db.updateCompleted(id)
     }
 
     fun addTodo(todo: Todo) {

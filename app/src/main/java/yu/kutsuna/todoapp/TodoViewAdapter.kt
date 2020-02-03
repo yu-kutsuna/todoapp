@@ -1,5 +1,6 @@
 package yu.kutsuna.todoapp
 
+import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.databinding.TodoRowItemBinding
+
 
 class TodoViewAdapter(private var todoList: List<Todo>,
                       private val parentLifecycleOwner: LifecycleOwner,
@@ -77,6 +79,16 @@ class TodoViewAdapter(private var todoList: List<Todo>,
         }
         if(position + 1 == todoList.size) {
             allSelectType = AllSelectType.NONE
+        }
+
+        Log.d(TAG, "position $position , isCompleted ${todoList[position].isCompleted}")
+        if(todoList[position].isCompleted) {
+            val paint = holder.binding.todoValue.paint
+            paint.flags = holder.binding.todoValue.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            paint.isAntiAlias = true
+        } else {
+            val paint = holder.binding.todoValue.paint
+            paint.flags = 0
         }
     }
 

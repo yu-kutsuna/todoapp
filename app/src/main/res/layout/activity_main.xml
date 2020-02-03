@@ -178,6 +178,7 @@
                     android:gravity="center"
                     android:text="@string/clear_completed"
                     android:visibility="@{viewModel.isItemChecking()? View.VISIBLE : View.INVISIBLE}"
+                    android:onClick="@{viewModel::clickClear}"
                     app:layout_constraintStart_toEndOf="@id/completed"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
