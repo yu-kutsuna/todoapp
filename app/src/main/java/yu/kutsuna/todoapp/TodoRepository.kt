@@ -10,4 +10,8 @@ class TodoRepository {
     fun addTodo(todo: Todo) {
         TodoApplication.database.todoDao().addTodo(todo)
     }
+
+    fun deleteTodo(id: String) {
+        TodoApplication.database.todoDao().delete(id)
+    }
 }

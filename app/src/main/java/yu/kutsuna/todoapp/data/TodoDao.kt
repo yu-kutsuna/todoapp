@@ -13,6 +13,6 @@ interface TodoDao {
     @Update
     fun updateCompleted(todo: Todo)
 
-    @Delete
-    fun delete(todo: Todo)
+    @Query("DELETE FROM Todo WHERE id = :id")
+    fun delete(id: String)
 }

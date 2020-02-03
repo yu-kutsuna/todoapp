@@ -11,17 +11,18 @@ import kotlinx.coroutines.withContext
 import yu.kutsuna.todoapp.data.Todo
 
 class MainViewModel: ViewModel() {
-    var isListExist: MutableLiveData<Boolean> = MutableLiveData()
-    var isEmptyAddText: MutableLiveData<Boolean> = MutableLiveData()
-    var isAllSelectClicked: MutableLiveData<Boolean> = MutableLiveData()
+    var isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    var isEmptyAddText: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    var isAllSelectClicked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    var isViewingDeleteDialog: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    var isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var todoList: MutableLiveData<List<Todo>> = MutableLiveData()
     var itemCountText: MutableLiveData<String> = MutableLiveData()
+    private lateinit var deleteId: String
     private var textValue: CharSequence? = null
     private val todoRepository = TodoRepository()
-
     fun init() {
         isEmptyAddText.value = true
-        isAllSelectClicked.value = false
         updateList()
     }
 
@@ -33,24 +34,23 @@ class MainViewModel: ViewModel() {
 
     fun clickAddButton(view: View) {
         GlobalScope.launch(Dispatchers.Main) {
+            isLoading.value = true
             withContext(Dispatchers.Default) {
                 todoRepository.addTodo(Todo(0, textValue.toString(), false))
             }
+            isLoading.value = false
+
             updateList()
         }
     }
 
     private fun updateList() {
         GlobalScope.launch(Dispatchers.Main) {
+            isLoading.value = true
             todoList.value  =
                 withContext(Dispatchers.Default) {
                     todoRepository.getTodoList().reversed()
                 }
-            todoList.value?.let{
-                for(todo in it) {
-                    Log.d("test", "todo [${todo.id}]: ${todo.value}" )
-                }
-            }
             todoList.value?.let {
                 if(it.isNullOrEmpty()) {
                     isListExist.value = false
@@ -59,6 +59,7 @@ class MainViewModel: ViewModel() {
                     itemCountText.value = "${it.size} items"
                 }
             }
+            isLoading.value = false
             Log.d("test", "isListExist ${isListExist.value}" )
         }
     }
@@ -67,5 +68,26 @@ class MainViewModel: ViewModel() {
         isAllSelectClicked.value?.let {
             isAllSelectClicked.value = !it
         }
+    }
+
+    fun clickDeleteIcon(id: String) {
+        deleteId = id
+        isViewingDeleteDialog.value = true
+    }
+
+    fun clickDeleteDialogYes(view: View) {
+        GlobalScope.launch(Dispatchers.Main) {
+            isLoading.value = true
+            withContext(Dispatchers.Default) {
+                todoRepository.deleteTodo(deleteId)
+            }
+            isLoading.value = false
+            updateList()
+            isViewingDeleteDialog.value = false
+        }
+    }
+
+    fun clickDeleteDialogNo(view: View) {
+        isViewingDeleteDialog.value = false
     }
 }

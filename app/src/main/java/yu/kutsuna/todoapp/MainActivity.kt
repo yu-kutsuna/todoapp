@@ -12,7 +12,7 @@ import yu.kutsuna.todoapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val myViewModel: MainViewModel by lazy {
+    private val mainViewModel: MainViewModel by lazy {
         ViewModelProviders.of(this).get(MainViewModel::class.java)
     }
 
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         binding = (DataBindingUtil.setContentView(this, R.layout.activity_main) as ActivityMainBinding).apply {
             lifecycleOwner = this@MainActivity
-            viewModel = myViewModel
+            viewModel = mainViewModel
             todoText.addTextChangedListener(object: TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                 }
@@ -30,19 +30,21 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    myViewModel.addText(s)
+                    mainViewModel.addText(s)
                 }
 
             })
         }
         observeViewModel()
-        myViewModel.init()
+        mainViewModel.init()
     }
 
     private fun observeViewModel() {
-        myViewModel.todoList.observe(this, Observer { todoList ->
+        mainViewModel.todoList.observe(this, Observer { todoList ->
             if(binding.recyclerView.adapter == null) {
-                binding.recyclerView.adapter = TodoViewAdapter(this, todoList)
+                binding.lifecycleOwner?.let {
+                    binding.recyclerView.adapter = TodoViewAdapter(todoList, it, mainViewModel)
+                }
                 binding.recyclerView.layoutManager = LinearLayoutManager(this)
             } else {
                 (binding.recyclerView.adapter as TodoViewAdapter).update(todoList)
@@ -51,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             hideKeyboard()
         })
 
-        myViewModel.isAllSelectClicked.observe(this, Observer {
+        mainViewModel.isAllSelectClicked.observe(this, Observer {
             binding.recyclerView.adapter?.let {
                 (it as TodoViewAdapter).allSelect()
             }
