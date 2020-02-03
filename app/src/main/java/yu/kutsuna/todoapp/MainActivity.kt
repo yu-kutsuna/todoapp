@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -48,9 +47,11 @@ class MainActivity : AppCompatActivity() {
             } else {
                 (binding.recyclerView.adapter as TodoViewAdapter).update(todoList)
             }
+            binding.todoText.setText("")
+            hideKeyboard()
         })
 
-        myViewModel.isAllSelectClicked.observe(this, Observer { isClicked ->
+        myViewModel.isAllSelectClicked.observe(this, Observer {
             binding.recyclerView.adapter?.let {
                 (it as TodoViewAdapter).allSelect()
             }
