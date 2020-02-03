@@ -49,12 +49,10 @@ class MainActivity : AppCompatActivity() {
                 (binding.recyclerView.adapter as TodoViewAdapter).update(todoList)
             }
         })
+
         myViewModel.isAllSelectClicked.observe(this, Observer { isClicked ->
-            if(isClicked) {
-                myViewModel.todoList.value?.forEachIndexed{ index , todo ->
-                    (binding.recyclerView.findViewHolderForItemId(index.toLong()) as TodoViewAdapter.TodoViewHolder).checkBox.isChecked = true
-                }
-                binding.recyclerView.adapter?.notifyDataSetChanged()
+            binding.recyclerView.adapter?.let {
+                (it as TodoViewAdapter).allSelect()
             }
         })
     }

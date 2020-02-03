@@ -27,6 +27,7 @@ class TodoViewAdapter(private val context: Context, private var todoList: List<T
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         holder.todoValue.text = todoList[position].value
+        holder.checkBox.isChecked = isAllSelected
     }
 
     fun update(todoList: List<Todo>) {
@@ -36,6 +37,11 @@ class TodoViewAdapter(private val context: Context, private var todoList: List<T
     }
 
     fun allSelect() {
+        isAllSelected = !isAllSelected
+        notifyDataSetChanged()
+    }
 
+    companion object {
+        var isAllSelected = false
     }
 }
