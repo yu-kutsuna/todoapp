@@ -78,8 +78,11 @@ class TodoViewAdapter(
         when (allSelectType) {
             AllSelectType.ALL_SELECT -> holder.binding.checkBox.isChecked = true
             AllSelectType.ALL_CLEAR -> holder.binding.checkBox.isChecked = false
-            AllSelectType.NONE -> holder.binding.checkBox.isChecked = false
+            AllSelectType.NONE -> {
+                holder.binding.checkBox.isChecked = false
+            }
         }
+
         if (position + 1 == todoList.size) {
             allSelectType = AllSelectType.NONE
         }
@@ -100,7 +103,6 @@ class TodoViewAdapter(
     }
 
     fun update(todoList: List<Todo>) {
-        Log.d("test", "TodoViewAdapter updateList!")
         this.todoList = todoList
         notifyDataSetChanged()
     }

@@ -51,6 +51,7 @@ class MainViewModel: ViewModel() {
     }
 
     private fun updateList() {
+        isItemChecking.value = false
         GlobalScope.launch(Dispatchers.Main) {
             isLoading.value = true
             todoList.value  =
