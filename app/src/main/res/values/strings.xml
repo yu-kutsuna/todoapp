@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">ToDoApp</string>
+    <string name="app_name">MyToDo</string>
+    <string name="all_select_button">∨</string>
+    <string name="add_todo_text_hint">"  What need to be done?"</string>
+    <string name="all">All</string>
+    <string name="active">Active</string>
+    <string name="completed">Completed</string>
+    <string name="clear_completed">Clear</string>
+    <string name="add">add</string>
+    <string name="delete">×</string>
+    <string name="delete_dialog_message">選択したToDoを削除します</string>
+    <string name="delete_dialog_yes">YES</string>
+    <string name="delete_dialog_no">NO</string>
 </resources>

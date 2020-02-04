@@ -1,18 +1,285 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
+        <variable
+            name="viewModel"
+            type="yu.kutsuna.todoapp.main.MainViewModel" />
+        <import type="android.view.View" />
+        <import type="yu.kutsuna.todoapp.main.MainViewModel.SelectedType" />
+    </data>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray"
+        tools:context=".main.MainActivity">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/app_name"
+            android:textColor="@color/colorPrimary"
+            android:textSize="48sp"
+            android:textStyle="bold|italic"
+            app:layout_constraintBottom_toTopOf="@id/main_area"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_area"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="20dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title">
+
+            <TextView
+                android:id="@+id/all_select_button"
+                android:layout_width="30dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:onClick="@{viewModel::clickAllSelect}"
+                android:text="@string/all_select_button"
+                android:textColor="@color/gray"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:visibility="@{viewModel.isListExist()? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@id/todo_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/todo_text" />
+
+            <EditText
+                android:id="@+id/todo_text"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:hint="@string/add_todo_text_hint"
+                android:maxLines="1"
+                android:minLines="1"
+                android:textColorHint="@color/gray"
+                app:layout_constraintBottom_toTopOf="@id/divider"
+                app:layout_constraintEnd_toStartOf="@id/add_button"
+                app:layout_constraintStart_toEndOf="@id/all_select_button"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/add_button"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:onClick="@{viewModel::clickAddButton}"
+                android:text="@string/add"
+                android:visibility="@{viewModel.isEmptyAddText()? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toTopOf="@id/divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/todo_text"
+                app:layout_constraintTop_toTopOf="@id/todo_text" />
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:background="@color/gray"
+                android:visibility="@{viewModel.isListExist()? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/todo_text" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="@{viewModel.isListExist()? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toTopOf="@id/main_footer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider" />
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/main_footer"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:visibility="@{viewModel.isListExist()? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recycler_view">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:background="@color/gray"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/item_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:text="@{viewModel.itemCountText}"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/all"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="4 items" />
+
+                <TextView
+                    android:id="@+id/all"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:background="@{viewModel.selectedType == SelectedType.ALL? @drawable/gray : null}"
+                    android:gravity="center"
+                    android:onClick="@{viewModel::clickAll}"
+                    android:text="@string/all"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/active"
+                    app:layout_constraintStart_toEndOf="@id/item_count"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/active"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:background="@{viewModel.selectedType == SelectedType.ACTIVE? @drawable/gray : null}"
+                    android:gravity="center"
+                    android:onClick="@{viewModel::clickActive}"
+                    android:text="@string/active"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/completed"
+                    app:layout_constraintStart_toEndOf="@id/active"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/completed"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:background="@{viewModel.selectedType == SelectedType.COMPLETED? @drawable/gray : null}"
+                    android:gravity="center"
+                    android:onClick="@{viewModel::clickCompleted}"
+                    android:text="@string/completed"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/clear_completed"
+                    app:layout_constraintStart_toEndOf="@id/active"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/clear_completed"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:onClick="@{viewModel::clickClear}"
+                    android:text="@string/clear_completed"
+                    android:visibility="@{viewModel.isItemChecking()? View.VISIBLE : View.INVISIBLE}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/completed"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/delete_dialog"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/grayAlpha"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="@{viewModel.isViewingDeleteDialog()? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/delete_dialog_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="@string/delete_dialog_message"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/delete_dialog_no"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/delete_dialog_no"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{viewModel::clickDeleteDialogNo}"
+                    android:text="@string/delete_dialog_no"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/delete_dialog_yes"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/delete_dialog_message" />
+
+                <Button
+                    android:id="@+id/delete_dialog_yes"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{viewModel::clickDeleteDialogYes}"
+                    android:text="@string/delete_dialog_yes"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/delete_dialog_no"
+                    app:layout_constraintTop_toTopOf="@id/delete_dialog_no" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/progress_dialog"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0.5"
+            android:background="@color/grayAlpha"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="@{viewModel.isLoading()? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
