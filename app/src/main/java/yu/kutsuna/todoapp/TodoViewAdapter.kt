@@ -76,11 +76,9 @@ class TodoViewAdapter(
          * 全て選択されている場合は全てのチェックボックスの選択を解除する
          */
         when (allSelectType) {
-            AllSelectType.ALL_SELECT -> holder.binding.checkBox.isChecked = true
-            AllSelectType.ALL_CLEAR -> holder.binding.checkBox.isChecked = false
-            AllSelectType.NONE -> {
-                holder.binding.checkBox.isChecked = false
-            }
+            AllSelectType.ALL_SELECT -> todoRowViewModel?.isChecked?.value = true
+            AllSelectType.ALL_CLEAR -> todoRowViewModel?.isChecked?.value = false
+            AllSelectType.NONE -> todoRowViewModel?.isChecked?.value = false
         }
 
         if (position + 1 == todoList.size) {

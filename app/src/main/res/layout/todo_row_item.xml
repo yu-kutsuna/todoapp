@@ -22,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:checked="@{viewModel.isChecked()}"
             android:visibility="@{viewModel.isCompleted()? View.INVISIBLE : View.VISIBLE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -29,12 +30,15 @@
 
         <TextView
             android:id="@+id/todo_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_margin="10dp"
+            android:gravity="center_vertical"
             android:text="@{Todo.component2()}"
+            android:onClick="@{viewModel::clickTodoValue}"
             app:layout_constraintStart_toEndOf="@id/checkBox"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/delete"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="test"/>
 
