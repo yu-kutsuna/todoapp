@@ -3,19 +3,18 @@ package yu.kutsuna.todoapp.row
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import yu.kutsuna.todoapp.main.MainViewModel
 
-class TodoRowViewModel(val id: String, private val parentViewModel: MainViewModel): ViewModel() {
+class TodoRowViewModel(val id: String): ViewModel() {
     var isCompleted: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var isChecked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-
+    var deleteId: MutableLiveData<String> = MutableLiveData()
 
     /**
      * 削除アイコン押下時の処理
      * MainViewModelに削除を通知する
      */
     fun clickDeleteIcon(view: View) {
-        parentViewModel.clickDeleteIcon(id)
+        deleteId.value = id
     }
 
     /**

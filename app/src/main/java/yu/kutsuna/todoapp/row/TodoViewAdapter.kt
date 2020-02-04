@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import yu.kutsuna.todoapp.R
 import yu.kutsuna.todoapp.data.Todo
@@ -15,7 +16,8 @@ import yu.kutsuna.todoapp.main.MainViewModel
 class TodoViewAdapter(
     private var todoList: List<Todo>,
     private val parentLifecycleOwner: LifecycleOwner,
-    private val parentViewModel: MainViewModel
+    private val parentViewModel: MainViewModel,
+    private val rowEventListener: RowEventListener
 ) : RecyclerView.Adapter<TodoViewAdapter.TodoViewHolder>() {
     private var todoRowViewModel: TodoRowViewModel? = null
 
@@ -25,6 +27,10 @@ class TodoViewAdapter(
         NONE,
         ALL_SELECT,
         ALL_CLEAR
+    }
+
+    interface RowEventListener {
+        fun clickDeleteIcon(id: String)
     }
 
     override fun onCreateViewHolder(
@@ -43,10 +49,7 @@ class TodoViewAdapter(
     override fun getItemCount(): Int = todoList.size
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        todoRowViewModel = TodoRowViewModel(
-            todoList[position].id.toString(),
-            parentViewModel
-        )
+        todoRowViewModel = TodoRowViewModel(todoList[position].id.toString())
         holder.binding.todo = todoList[position]
         holder.binding.viewModel = todoRowViewModel
         holder.binding.lifecycleOwner = parentLifecycleOwner
@@ -102,6 +105,10 @@ class TodoViewAdapter(
             val paint = holder.binding.todoValue.paint
             paint.flags = 0
         }
+
+        todoRowViewModel?.deleteId?.observe(parentLifecycleOwner, Observer {
+            rowEventListener.clickDeleteIcon(it)
+        })
     }
 
     /**

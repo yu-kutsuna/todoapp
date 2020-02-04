@@ -65,7 +65,12 @@ class MainActivity : AppCompatActivity() {
                         TodoViewAdapter(
                             todoList,
                             it,
-                            mainViewModel
+                            mainViewModel,
+                            object: TodoViewAdapter.RowEventListener{
+                                override fun clickDeleteIcon(id: String) {
+                                    mainViewModel.clickDeleteIcon(id)
+                                }
+                            }
                         )
                 }
                 binding.recyclerView.layoutManager = LinearLayoutManager(this)
