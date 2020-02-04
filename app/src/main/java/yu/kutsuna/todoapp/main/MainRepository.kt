@@ -1,8 +1,9 @@
-package yu.kutsuna.todoapp
+package yu.kutsuna.todoapp.main
 
+import yu.kutsuna.todoapp.TodoApplication
 import yu.kutsuna.todoapp.data.Todo
 
-class TodoRepository {
+class MainRepository {
     fun getTodoList(): List<Todo> {
         return db.findAll()
     }

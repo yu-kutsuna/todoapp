@@ -1,4 +1,4 @@
-package yu.kutsuna.todoapp
+package yu.kutsuna.todoapp.main
 
 import android.util.Log
 import android.view.View
@@ -27,7 +27,7 @@ class MainViewModel: ViewModel() {
     var checkedIdList: MutableList<String> = mutableListOf()
     private lateinit var deleteId: String
     private var textValue: CharSequence? = null
-    private val todoRepository = TodoRepository()
+    private val todoRepository = MainRepository()
     fun init() {
         isEmptyAddText.value = true
         updateList()
@@ -124,7 +124,8 @@ class MainViewModel: ViewModel() {
     }
 
     fun clickCompleted(view: View) {
-        selectedType = SelectedType.COMPLETED
+        selectedType =
+            SelectedType.COMPLETED
         updateList()
     }
 

@@ -1,4 +1,4 @@
-package yu.kutsuna.todoapp
+package yu.kutsuna.todoapp.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,7 +8,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import yu.kutsuna.todoapp.R
+import yu.kutsuna.todoapp.row.TodoViewAdapter
 import yu.kutsuna.todoapp.databinding.ActivityMainBinding
+import yu.kutsuna.todoapp.hideKeyboard
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -19,7 +22,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        binding = (DataBindingUtil.setContentView(this, R.layout.activity_main) as ActivityMainBinding).apply {
+        binding = (DataBindingUtil.setContentView(this,
+            R.layout.activity_main
+        ) as ActivityMainBinding).apply {
             lifecycleOwner = this@MainActivity
             viewModel = mainViewModel
             todoText.addTextChangedListener(object: TextWatcher {
@@ -52,7 +57,12 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.todoList.observe(this, Observer { todoList ->
             if(binding.recyclerView.adapter == null) {
                 binding.lifecycleOwner?.let {
-                    binding.recyclerView.adapter = TodoViewAdapter(todoList, it, mainViewModel)
+                    binding.recyclerView.adapter =
+                        TodoViewAdapter(
+                            todoList,
+                            it,
+                            mainViewModel
+                        )
                 }
                 binding.recyclerView.layoutManager = LinearLayoutManager(this)
             } else {

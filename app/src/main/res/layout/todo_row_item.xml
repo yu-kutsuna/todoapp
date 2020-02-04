@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="yu.kutsuna.todoapp.TodoRowViewModel" />
+            type="yu.kutsuna.todoapp.row.TodoRowViewModel" />
         <variable name="Todo"
             type="yu.kutsuna.todoapp.data.Todo" />
         <import type="android.view.View" />

@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="yu.kutsuna.todoapp.MainViewModel" />
+            type="yu.kutsuna.todoapp.main.MainViewModel" />
 
         <import type="android.view.View" />
     </data>
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/gray"
-        tools:context=".MainActivity">
+        tools:context=".main.MainActivity">
 
         <TextView
             android:id="@+id/title"

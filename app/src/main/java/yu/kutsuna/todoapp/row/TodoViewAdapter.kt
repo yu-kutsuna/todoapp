@@ -1,4 +1,4 @@
-package yu.kutsuna.todoapp
+package yu.kutsuna.todoapp.row
 
 import android.graphics.Paint
 import android.util.Log
@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
+import yu.kutsuna.todoapp.R
 import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.databinding.TodoRowItemBinding
+import yu.kutsuna.todoapp.main.MainViewModel
 
 
 class TodoViewAdapter(
@@ -42,7 +44,10 @@ class TodoViewAdapter(
     override fun getItemCount(): Int = todoList.size
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        todoRowViewModel = TodoRowViewModel(todoList[position].id.toString(), parentViewModel)
+        todoRowViewModel = TodoRowViewModel(
+            todoList[position].id.toString(),
+            parentViewModel
+        )
         holder.binding.todo = todoList[position]
         holder.binding.viewModel = todoRowViewModel
         holder.binding.lifecycleOwner = parentLifecycleOwner
@@ -82,7 +87,8 @@ class TodoViewAdapter(
         }
 
         if (position + 1 == todoList.size) {
-            allSelectType = AllSelectType.NONE
+            allSelectType =
+                AllSelectType.NONE
         }
 
         /**
@@ -116,6 +122,7 @@ class TodoViewAdapter(
 
     companion object {
         private const val TAG = "TodoViewAdapter"
-        var allSelectType = AllSelectType.NONE
+        var allSelectType =
+            AllSelectType.NONE
     }
 }
