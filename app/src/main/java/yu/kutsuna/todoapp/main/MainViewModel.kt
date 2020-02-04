@@ -229,14 +229,23 @@ class MainViewModel: ViewModel() {
         return repository.getCompletedTodoList().reversed()
     }
 
+    /**
+     * 追加日時の取得
+     */
     private fun getAddedDate(): String {
         return "Added: ${ getNowDate() }"
     }
 
+    /**
+     * 完了日時の取得
+     */
     private fun getCompletedDate(): String {
         return "Completed: ${ getNowDate() }"
     }
 
+    /**
+     * 現在日時の取得
+     */
     private fun getNowDate(): String {
         return SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(Date(System.currentTimeMillis()))
     }
