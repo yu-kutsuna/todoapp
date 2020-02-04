@@ -27,7 +27,7 @@ class MainViewModel: ViewModel() {
     var checkedIdList: MutableList<String> = mutableListOf()
     private lateinit var deleteId: String
     private var textValue: CharSequence? = null
-    private val todoRepository = MainRepository()
+    private val repository = MainRepository()
     fun init() {
         isEmptyAddText.value = true
         updateList()
@@ -42,7 +42,7 @@ class MainViewModel: ViewModel() {
         GlobalScope.launch(Dispatchers.Main) {
             isLoading.value = true
             withContext(Dispatchers.Default) {
-                todoRepository.addTodo(Todo(0, textValue.toString(), false))
+                repository.addTodo(Todo(0, textValue.toString(), false))
             }
             isLoading.value = false
 
@@ -101,7 +101,7 @@ class MainViewModel: ViewModel() {
             }
 
             withContext(Dispatchers.Default) {
-                todoRepository.deleteTodo(deleteId)
+                repository.deleteTodo(deleteId)
             }
             isLoading.value = false
             updateList()
@@ -134,7 +134,7 @@ class MainViewModel: ViewModel() {
             isLoading.value = true
             withContext(Dispatchers.Default) {
                 checkedIdList.forEach {
-                    todoRepository.updateCompleted(it)
+                    repository.updateCompleted(it)
                 }
             }
             isLoading.value = false
@@ -143,14 +143,14 @@ class MainViewModel: ViewModel() {
     }
 
     private fun getAllTodoList(): List<Todo> {
-        return todoRepository.getTodoList().reversed()
+        return repository.getTodoList().reversed()
     }
 
     private fun getActiveTodoList(): List<Todo> {
-        return todoRepository.getActiveTodoList().reversed()
+        return repository.getActiveTodoList().reversed()
     }
 
     private fun getCompletedTodoList(): List<Todo> {
-        return todoRepository.getCompletedTodoList().reversed()
+        return repository.getCompletedTodoList().reversed()
     }
 }
