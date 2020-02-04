@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ToDoApp</string>
+    <string name="app_name">MyToDo</string>
     <string name="all_select_button">∨</string>
     <string name="add_todo_text_hint">"  What need to be done?"</string>
     <string name="all">All</string>

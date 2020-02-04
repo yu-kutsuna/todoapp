@@ -17,8 +17,8 @@ class MainRepository {
         return db.findCompleted()
     }
 
-    fun updateCompleted(id: String) {
-        db.updateCompleted(id)
+    fun updateCompleted(id: String, date: String) {
+        db.updateCompleted(id, date)
     }
 
     fun addTodo(todo: Todo) {

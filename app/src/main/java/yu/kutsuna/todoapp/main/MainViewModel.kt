@@ -8,6 +8,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import yu.kutsuna.todoapp.data.Todo
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainViewModel: ViewModel() {
 
@@ -60,7 +62,7 @@ class MainViewModel: ViewModel() {
         GlobalScope.launch(Dispatchers.Main) {
             isLoading.value = true
             withContext(Dispatchers.Default) {
-                repository.addTodo(Todo(0, textValue.toString(), false))
+                repository.addTodo(Todo(0, textValue.toString(), false, getAddedDate()))
             }
             isLoading.value = false
 
@@ -198,7 +200,7 @@ class MainViewModel: ViewModel() {
             isLoading.value = true
             withContext(Dispatchers.Default) {
                 checkedIdList.forEach {
-                    repository.updateCompleted(it)
+                    repository.updateCompleted(it, getCompletedDate())
                 }
             }
             isLoading.value = false
@@ -225,5 +227,17 @@ class MainViewModel: ViewModel() {
      */
     private fun getCompletedTodoList(): List<Todo> {
         return repository.getCompletedTodoList().reversed()
+    }
+
+    private fun getAddedDate(): String {
+        return "Added: ${ getNowDate() }"
+    }
+
+    private fun getCompletedDate(): String {
+        return "Completed: ${ getNowDate() }"
+    }
+
+    private fun getNowDate(): String {
+        return SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(Date(System.currentTimeMillis()))
     }
 }

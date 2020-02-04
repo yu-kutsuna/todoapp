@@ -8,5 +8,6 @@ data class Todo(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val value: String,
-    val isCompleted: Boolean
+    val isCompleted: Boolean,
+    val updateDate: String
 )
