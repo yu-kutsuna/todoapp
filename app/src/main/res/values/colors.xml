@@ -6,4 +6,6 @@
     <color name="white">#ffffff</color>
     <color name="gray">#d3d3d3</color>
     <color name="grayAlpha">#80d3d3d3</color>
+
+    <drawable name="gray">@color/gray</drawable>
 </resources>

@@ -10,6 +10,7 @@
             type="yu.kutsuna.todoapp.main.MainViewModel" />
 
         <import type="android.view.View" />
+        <import type="yu.kutsuna.todoapp.main.MainViewModel.SelectedType" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -142,6 +143,7 @@
                     android:text="@string/all"
                     android:gravity="center"
                     android:onClick="@{viewModel::clickAll}"
+                    android:background="@{viewModel.selectedType == SelectedType.ALL? @drawable/gray : null}"
                     app:layout_constraintStart_toEndOf="@id/item_count"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/active"
@@ -154,6 +156,7 @@
                     android:text="@string/active"
                     android:gravity="center"
                     android:onClick="@{viewModel::clickActive}"
+                    android:background="@{viewModel.selectedType == SelectedType.ACTIVE? @drawable/gray : null}"
                     app:layout_constraintStart_toEndOf="@id/active"
                     app:layout_constraintEnd_toStartOf="@id/completed"
                     app:layout_constraintTop_toTopOf="parent"
@@ -166,6 +169,7 @@
                     android:gravity="center"
                     android:text="@string/completed"
                     android:onClick="@{viewModel::clickCompleted}"
+                    android:background="@{viewModel.selectedType == SelectedType.COMPLETED? @drawable/gray : null}"
                     app:layout_constraintStart_toEndOf="@id/active"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/clear_completed"

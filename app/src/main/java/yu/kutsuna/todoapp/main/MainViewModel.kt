@@ -15,7 +15,7 @@ class MainViewModel: ViewModel() {
         ALL, ACTIVE, COMPLETED
     }
 
-    var selectedType = SelectedType.ALL
+    var selectedType: MutableLiveData<SelectedType> = MutableLiveData<SelectedType>().apply { value = SelectedType.ALL }
     var isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var isEmptyAddText: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var isAllSelectClicked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
@@ -56,15 +56,17 @@ class MainViewModel: ViewModel() {
             isLoading.value = true
             todoList.value  =
                 withContext(Dispatchers.Default) {
-                    when(selectedType) {
-                        SelectedType.ALL -> getAllTodoList()
-                        SelectedType.ACTIVE -> getActiveTodoList()
-                        SelectedType.COMPLETED -> getCompletedTodoList()
+                    selectedType.value?.let {
+                        when (it) {
+                            SelectedType.ALL -> getAllTodoList()
+                            SelectedType.ACTIVE -> getActiveTodoList()
+                            SelectedType.COMPLETED -> getCompletedTodoList()
+                        }
                     }
                 }
 
             todoList.value?.let {
-                if(selectedType == SelectedType.ALL) {
+                if(selectedType.value == SelectedType.ALL) {
                     isListExist.value = !it.isNullOrEmpty()
                 }
                 itemCountText.value = "${it.size} items"
@@ -114,18 +116,17 @@ class MainViewModel: ViewModel() {
     }
 
     fun clickAll(view: View) {
-        selectedType = SelectedType.ALL
+        selectedType.value = SelectedType.ALL
         updateList()
     }
 
     fun clickActive(view: View) {
-        selectedType = SelectedType.ACTIVE
+        selectedType.value = SelectedType.ACTIVE
         updateList()
     }
 
     fun clickCompleted(view: View) {
-        selectedType =
-            SelectedType.COMPLETED
+        selectedType.value = SelectedType.COMPLETED
         updateList()
     }
 
