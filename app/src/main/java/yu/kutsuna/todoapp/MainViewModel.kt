@@ -88,6 +88,17 @@ class MainViewModel: ViewModel() {
     fun clickDeleteDialogYes(view: View) {
         GlobalScope.launch(Dispatchers.Main) {
             isLoading.value = true
+
+            // チェック済みアイテムが削除対象の場合はチェック済みアイテムリストから除外する
+            run loop@{
+                checkedIdList.forEachIndexed { index, id ->
+                    if (id == deleteId) {
+                        checkedIdList.removeAt(index)
+                        return@loop
+                    }
+                }
+            }
+
             withContext(Dispatchers.Default) {
                 todoRepository.deleteTodo(deleteId)
             }

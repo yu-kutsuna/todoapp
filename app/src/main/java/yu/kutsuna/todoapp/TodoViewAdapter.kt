@@ -78,12 +78,15 @@ class TodoViewAdapter(
         when (allSelectType) {
             AllSelectType.ALL_SELECT -> holder.binding.checkBox.isChecked = true
             AllSelectType.ALL_CLEAR -> holder.binding.checkBox.isChecked = false
-            AllSelectType.NONE -> Unit
+            AllSelectType.NONE -> holder.binding.checkBox.isChecked = false
         }
         if (position + 1 == todoList.size) {
             allSelectType = AllSelectType.NONE
         }
 
+        /**
+         * 完了済みのアイテムに取り消し線をつける
+         */
         Log.d(TAG, "position $position , isCompleted ${todoList[position].isCompleted}")
         if (todoList[position].isCompleted) {
             val paint = holder.binding.todoValue.paint
