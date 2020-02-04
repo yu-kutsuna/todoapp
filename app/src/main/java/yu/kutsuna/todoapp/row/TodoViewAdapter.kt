@@ -1,7 +1,6 @@
 package yu.kutsuna.todoapp.row
 
 import android.graphics.Paint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -94,7 +93,6 @@ class TodoViewAdapter(
         /**
          * 完了済みのアイテムに取り消し線をつける
          */
-        Log.d(TAG, "position $position , isCompleted ${todoList[position].isCompleted}")
         if (todoList[position].isCompleted) {
             val paint = holder.binding.todoValue.paint
             paint.flags = holder.binding.todoValue.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG

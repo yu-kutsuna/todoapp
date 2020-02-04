@@ -27,6 +27,10 @@ class MainActivity : AppCompatActivity() {
         ) as ActivityMainBinding).apply {
             lifecycleOwner = this@MainActivity
             viewModel = mainViewModel
+            /**
+             * EditTextの入力イベント
+             * Addボタンの出しわけに使用
+             */
             todoText.addTextChangedListener(object: TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                 }

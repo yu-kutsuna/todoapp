@@ -1,6 +1,5 @@
 package yu.kutsuna.todoapp.main
 
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,6 +24,7 @@ class MainViewModel: ViewModel() {
     var todoList: MutableLiveData<List<Todo>> = MutableLiveData()
     var itemCountText: MutableLiveData<String> = MutableLiveData()
     var checkedIdList: MutableList<String> = mutableListOf()
+
     private lateinit var deleteId: String
     private var textValue: CharSequence? = null
     private val repository = MainRepository()
@@ -73,7 +73,6 @@ class MainViewModel: ViewModel() {
             }
 
             isLoading.value = false
-            Log.d("test", "isListExist ${isListExist.value}" )
         }
     }
 
