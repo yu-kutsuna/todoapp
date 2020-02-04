@@ -4,6 +4,7 @@ import yu.kutsuna.todoapp.TodoApplication
 import yu.kutsuna.todoapp.data.Todo
 
 class MainRepository {
+
     fun getTodoList(): List<Todo> {
         return db.findAll()
     }

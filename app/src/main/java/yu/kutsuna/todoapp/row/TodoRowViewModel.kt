@@ -10,10 +10,19 @@ class TodoRowViewModel(val id: String, private val parentViewModel: MainViewMode
     var isChecked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
 
 
+    /**
+     * 削除アイコン押下時の処理
+     * MainViewModelに削除を通知する
+     */
     fun clickDeleteIcon(view: View) {
         parentViewModel.clickDeleteIcon(id)
     }
 
+    /**
+     * Todoのテキスト押下時の処理
+     * 完了済：何もしない
+     * 未完了：チェックボックスのチェック状態を反転する
+     */
     fun clickTodoValue(view: View) {
         isCompleted.value?.let {
             if(it) return

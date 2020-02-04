@@ -10,6 +10,10 @@ import kotlinx.coroutines.withContext
 import yu.kutsuna.todoapp.data.Todo
 
 class MainViewModel: ViewModel() {
+
+    /**
+     * フッター選択状態を判別するためのEnum
+     */
     enum class SelectedType {
         ALL, ACTIVE, COMPLETED
     }
@@ -28,16 +32,30 @@ class MainViewModel: ViewModel() {
     private lateinit var deleteId: String
     private var textValue: CharSequence? = null
     private val repository = MainRepository()
+
+    /**
+     * 初期化処理
+     */
     fun init() {
         isEmptyAddText.value = true
         updateList()
     }
 
+    /**
+     * EditTextの入力イベント検知時の処理
+     * 入力されたテキストを保持し、
+     * 空かどうかを判定するLiveDataを更新する(Addボタンの出しわけに使用)
+     */
     fun addText(text: CharSequence?) {
         textValue = text
         isEmptyAddText.value = text.isNullOrEmpty()
     }
 
+    /**
+     * Addボタン押下時の処理
+     * Repositoryからデータ追加を行い、
+     * リストを更新する
+     */
     fun clickAddButton(view: View) {
         GlobalScope.launch(Dispatchers.Main) {
             isLoading.value = true
@@ -50,6 +68,12 @@ class MainViewModel: ViewModel() {
         }
     }
 
+    /**
+     * リストアップデート処理
+     * 選択されたタイプに応じてRepositoryからTodoリストを取得する
+     * ALLの場合のみ、フッター表示制御のためにLiveData:isListExitを更新する
+     * リストが存在した場合はitemカウント数用のLiveDataも更新する
+     */
     private fun updateList() {
         isItemChecking.value = false
         GlobalScope.launch(Dispatchers.Main) {
@@ -76,17 +100,33 @@ class MainViewModel: ViewModel() {
         }
     }
 
+    /**
+     * 全選択ボタン押下時の処理
+     * LiveData：isAllSelectClickedを更新する
+     * isAllSelectClickedはActivityで監視
+     */
     fun clickAllSelect(view: View) {
         isAllSelectClicked.value?.let {
             isAllSelectClicked.value = !it
         }
     }
 
+    /**
+     * 削除アイコン押下時の処理
+     * TodoViewAdapterから呼ばれる
+     * LiveData：isViewingDeleteDialogを更新し、削除確認ダイアログを表示する
+     */
     fun clickDeleteIcon(id: String) {
         deleteId = id
         isViewingDeleteDialog.value = true
     }
 
+    /**
+     * 削除確認ダイアログのYesボタン押下時の処理
+     * チェック済みのアイテムが削除対象の場合はリストから除外
+     * Repositoryから該当アイテム削除処理を実行し、
+     * リストを更新する
+     */
     fun clickDeleteDialogYes(view: View) {
         GlobalScope.launch(Dispatchers.Main) {
             isLoading.value = true
@@ -110,25 +150,49 @@ class MainViewModel: ViewModel() {
         }
     }
 
+    /**
+     * 削除ダイアログのNoボタン押下時の処理
+     * 削除ダイアログを非表示にする
+     */
     fun clickDeleteDialogNo(view: View) {
         isViewingDeleteDialog.value = false
     }
 
+    /**
+     * フッター：All選択時の処理
+     * selectedTypeをALLにし、
+     * リストを更新する
+     */
     fun clickAll(view: View) {
         selectedType.value = SelectedType.ALL
         updateList()
     }
 
+    /**
+     * フッター：Active選択時の処理
+     * selectedTypeをActiveにし、
+     * リストを更新する
+     */
     fun clickActive(view: View) {
         selectedType.value = SelectedType.ACTIVE
         updateList()
     }
 
+    /**
+     * フッター：Completed選択時の処理
+     * selectedTypeをCompletedにし、
+     * リストを更新する
+     */
     fun clickCompleted(view: View) {
         selectedType.value = SelectedType.COMPLETED
         updateList()
     }
 
+    /**
+     * クリアボタン押下時の処理
+     * Repositoryから該当アイテムを完了済みにし、
+     * リストを更新する
+     */
     fun clickClear(view: View) {
         GlobalScope.launch(Dispatchers.Main) {
             isLoading.value = true
@@ -142,14 +206,23 @@ class MainViewModel: ViewModel() {
         }
     }
 
+    /**
+     * 全てのTodoをリストで取得する
+     */
     private fun getAllTodoList(): List<Todo> {
         return repository.getTodoList().reversed()
     }
 
+    /**
+     * 未完了のTodoをリストで取得する
+     */
     private fun getActiveTodoList(): List<Todo> {
         return repository.getActiveTodoList().reversed()
     }
 
+    /**
+     * 完了済みのTodoをリストで取得する
+     */
     private fun getCompletedTodoList(): List<Todo> {
         return repository.getCompletedTodoList().reversed()
     }

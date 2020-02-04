@@ -104,11 +104,17 @@ class TodoViewAdapter(
         }
     }
 
+    /**
+     * リスト更新処理
+     */
     fun update(todoList: List<Todo>) {
         this.todoList = todoList
         notifyDataSetChanged()
     }
 
+    /**
+     * 全選択ボタン押下時の処理
+     */
     fun allSelect() {
         allSelectType = if (parentViewModel.checkedIdList.size < todoList.size) {
             AllSelectType.ALL_SELECT

@@ -8,7 +8,6 @@ class TodoApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-
         database = Room.databaseBuilder(this, objectOf<DataBase>(), "todo.db").build()
     }
 
