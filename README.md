@@ -1,6 +1,7 @@
 # ToDoアプリ
 
 ## 基本構成
+* 言語 → Kotlin
 * アーキテクチャ → MVVM + DataBinding
 * DB処理 → Room
 * 非同期処理 → Coroutine
