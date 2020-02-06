@@ -1,6 +1,7 @@
 package yu.kutsuna.todoapp.row
 
 import android.graphics.Paint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -62,19 +63,19 @@ class TodoViewAdapter(
          */
         holder.binding.checkBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                parentViewModel.checkedIdList.add(todoList[position].id.toString())
+                parentViewModel.checkedTodoList.add(todoList[position])
             } else {
                 run loop@{
-                    parentViewModel.checkedIdList.forEachIndexed { index, id ->
-                        if (id == todoList[position].id.toString()) {
-                            parentViewModel.checkedIdList.removeAt(index)
+                    parentViewModel.checkedTodoList.forEachIndexed { index, todo ->
+                        if (todo.id == todoList[position].id) {
+                            parentViewModel.checkedTodoList.removeAt(index)
                             return@loop
                         }
                     }
                 }
             }
 
-            parentViewModel.isItemChecking.value = parentViewModel.checkedIdList.isNotEmpty()
+            parentViewModel.isItemChecking.value = parentViewModel.checkedTodoList.isNotEmpty()
         }
 
         /**
@@ -123,7 +124,8 @@ class TodoViewAdapter(
      * 全選択ボタン押下時の処理
      */
     fun allSelect() {
-        allSelectType = if (parentViewModel.checkedIdList.size < todoList.size) {
+        Log.d(TAG, "allSelect checkedListSize ${parentViewModel.checkedTodoList.size } , todoListSize ${todoList.size}")
+        allSelectType = if (parentViewModel.checkedTodoList.size < todoList.size) {
             AllSelectType.ALL_SELECT
         } else {
             AllSelectType.ALL_CLEAR

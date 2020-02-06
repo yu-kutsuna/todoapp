@@ -29,7 +29,7 @@ class MainViewModel: ViewModel() {
     var isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var todoList: MutableLiveData<List<Todo>> = MutableLiveData()
     var itemCountText: MutableLiveData<String> = MutableLiveData()
-    var checkedIdList: MutableList<String> = mutableListOf()
+    var checkedTodoList: MutableList<Todo> = mutableListOf()
 
     private lateinit var deleteId: String
     private var textValue: CharSequence? = null
@@ -78,6 +78,7 @@ class MainViewModel: ViewModel() {
      */
     private fun updateList() {
         isItemChecking.value = false
+        checkedTodoList = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {
             isLoading.value = true
             todoList.value  =
@@ -86,7 +87,9 @@ class MainViewModel: ViewModel() {
                         when (it) {
                             SelectedType.ALL -> getAllTodoList()
                             SelectedType.ACTIVE -> getActiveTodoList()
-                            SelectedType.COMPLETED -> getCompletedTodoList()
+                            SelectedType.COMPLETED -> {
+                                getCompletedTodoList()
+                            }
                         }
                     }
                 }
@@ -135,9 +138,9 @@ class MainViewModel: ViewModel() {
 
             // チェック済みアイテムが削除対象の場合はチェック済みアイテムリストから除外する
             run loop@{
-                checkedIdList.forEachIndexed { index, id ->
-                    if (id == deleteId) {
-                        checkedIdList.removeAt(index)
+                checkedTodoList.forEachIndexed { index, todo ->
+                    if (todo.id.toString() == deleteId) {
+                        checkedTodoList.removeAt(index)
                         return@loop
                     }
                 }
@@ -199,8 +202,11 @@ class MainViewModel: ViewModel() {
         GlobalScope.launch(Dispatchers.Main) {
             isLoading.value = true
             withContext(Dispatchers.Default) {
-                checkedIdList.forEach {
-                    repository.updateCompleted(it, getCompletedDate())
+                checkedTodoList.forEach {
+                    // 未完了のアイテムのみ処理する
+                    if(!it.isCompleted) {
+                        repository.updateCompleted(it.id.toString(), getCompletedDate())
+                    }
                 }
             }
             isLoading.value = false

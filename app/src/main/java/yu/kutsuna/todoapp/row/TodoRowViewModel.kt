@@ -23,10 +23,6 @@ class TodoRowViewModel(val id: String): ViewModel() {
      * 未完了：チェックボックスのチェック状態を反転する
      */
     fun clickTodoValue(view: View) {
-        isCompleted.value?.let {
-            if(it) return
-        }
-
         isChecked.value?.let {
             isChecked.value = !it
         }
