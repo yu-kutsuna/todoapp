@@ -31,6 +31,10 @@ class MainViewModel: ViewModel() {
     var todoList: MutableLiveData<List<TodoModel>> = MutableLiveData()
     var itemCountText: MutableLiveData<String> = MutableLiveData()
     var checkedTodoList: MutableList<Todo> = mutableListOf()
+        set(value) {
+            field = value
+            isItemChecking.value = field.isNotEmpty()
+        }
 
     private lateinit var deleteId: String
     private var textValue: CharSequence? = null

@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -51,15 +52,6 @@ class TodoViewAdapter(
     override fun getItemCount(): Int = todoList.size
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        todoRowViewModel = TodoRowViewModel(todoList[position].todo.id.toString())
-        holder.binding.todo = todoList[position].todo
-        holder.binding.viewModel = todoRowViewModel
-        holder.binding.lifecycleOwner = parentLifecycleOwner
-
-        // チェックボックスの初期化
-        Log.d(TAG, "onBindViewHolder position $position checked ${todoList[position].isChecked}")
-        holder.binding.viewModel?.isChecked?.value = todoList[position].isChecked
-
         /**
          * 全選択処理
          * 一つでも選択されている場合は選択されていないチェックボックスを選択済みにする
@@ -68,7 +60,6 @@ class TodoViewAdapter(
         when (allSelectType) {
             AllSelectType.ALL_SELECT -> {
                 Log.d(TAG, "allSelect type ALL_SELECT todoListSize ${todoList.size}")
-                holder.binding.viewModel?.isChecked?.value = true
                 todoList.forEach {
                     it.isChecked = true
                 }
@@ -76,19 +67,28 @@ class TodoViewAdapter(
             AllSelectType.ALL_CLEAR,
             AllSelectType.NONE -> {
                 Log.d(TAG, "allSelect type ALL_CLEAR or NONE")
-                holder.binding.viewModel?.isChecked?.value = false
                 todoList.forEach {
                     it.isChecked = false
                 }
             }
         }
 
-        parentViewModel.isItemChecking.value = todoList.any { it.isChecked }
+        todoRowViewModel = TodoRowViewModel(todoList[position]).apply { init() }
+        holder.binding.viewModel = todoRowViewModel
+        holder.binding.lifecycleOwner = parentLifecycleOwner
 
-        if (position + 1 == todoList.size) {
-            allSelectType =
-                AllSelectType.NONE
+        Log.d(TAG, "onBindViewHolder position $position isChecked ${todoList[position].isChecked}")
+
+        holder.binding.checkBox.setOnCheckedChangeListener { _, _ ->
+            val checkedTodoList = mutableListOf<Todo>()
+            todoList.forEach {
+                if(it.isChecked) {
+                    checkedTodoList.add(it.todo)
+                }
+            }
+            parentViewModel.checkedTodoList = checkedTodoList
         }
+
 
         /**
          * 完了済みのアイテムに取り消し線をつける
@@ -106,20 +106,6 @@ class TodoViewAdapter(
         todoRowViewModel?.deleteId?.observe(parentLifecycleOwner, Observer {
             rowEventListener.clickDeleteIcon(it)
         })
-
-        todoRowViewModel?.checkedId?.observe(parentLifecycleOwner, Observer { id ->
-
-            run loop@{
-                todoList.forEachIndexed { index, todo ->
-                    if (todo.todo.id.toString() == id) {
-                        todoRowViewModel?.isChecked?.value?.let { checked ->
-                            todoList[index].isChecked = checked
-                        }
-                        return@loop
-                    }
-                }
-            }
-        })
     }
 
     /**
@@ -127,6 +113,7 @@ class TodoViewAdapter(
      */
     fun update(todoList: List<TodoModel>) {
         this.todoList = todoList
+        allSelectType = AllSelectType.NONE
         notifyDataSetChanged()
     }
 

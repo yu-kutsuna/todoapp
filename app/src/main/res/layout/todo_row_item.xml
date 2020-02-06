@@ -9,10 +9,6 @@
             name="viewModel"
             type="yu.kutsuna.todoapp.row.TodoRowViewModel" />
 
-        <variable
-            name="Todo"
-            type="yu.kutsuna.todoapp.data.Todo" />
-
         <import type="android.view.View" />
     </data>
 
@@ -48,7 +44,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:gravity="center_vertical"
-                android:text="@{Todo.component2()}"
+                android:text="@{viewModel.value}"
                 app:layout_constraintBottom_toTopOf="@id/date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +56,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="@{Todo.component4()}"
+                android:text="@{viewModel.date}"
                 android:textColor="@color/darkGray"
                 android:textSize="8sp"
                 app:layout_constraintBottom_toBottomOf="parent"
