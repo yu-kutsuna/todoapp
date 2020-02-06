@@ -56,17 +56,9 @@ class TodoViewAdapter(
         holder.binding.viewModel = todoRowViewModel
         holder.binding.lifecycleOwner = parentLifecycleOwner
 
-        /**
-         * チェックボックスの状態変更時の処理
-         * チェックされたアイテムのIDのリストをMainViewModelで保持する
-         * また、全てのチェックが外れた時にクリアボタンを非表示にし、
-         * アイテムが一つでもチェックされた時にクリアボタンを表示する
-         */
-        holder.binding.checkBox.setOnCheckedChangeListener { _, isChecked ->
-            Log.d(TAG, "OnCheckedChangeListener isChecked $isChecked position $position")
-            todoList[position].isChecked = isChecked
-            parentViewModel.isItemChecking.value = todoList.any { isChecked }
-        }
+        // チェックボックスの初期化
+        Log.d(TAG, "onBindViewHolder position $position checked ${todoList[position].isChecked}")
+        holder.binding.viewModel?.isChecked?.value = todoList[position].isChecked
 
         /**
          * 全選択処理
@@ -75,18 +67,23 @@ class TodoViewAdapter(
          */
         when (allSelectType) {
             AllSelectType.ALL_SELECT -> {
-                Log.d(TAG, "allSelect type ALL_SELECT")
-                todoRowViewModel?.isChecked?.value = true
+                Log.d(TAG, "allSelect type ALL_SELECT todoListSize ${todoList.size}")
+                holder.binding.viewModel?.isChecked?.value = true
+                todoList.forEach {
+                    it.isChecked = true
+                }
             }
-            AllSelectType.ALL_CLEAR -> {
-                Log.d(TAG, "allSelect type ALL_CLEAR")
-                todoRowViewModel?.isChecked?.value = false
-            }
+            AllSelectType.ALL_CLEAR,
             AllSelectType.NONE -> {
-                Log.d(TAG, "allSelect type NONE")
-                todoRowViewModel?.isChecked?.value = false
+                Log.d(TAG, "allSelect type ALL_CLEAR or NONE")
+                holder.binding.viewModel?.isChecked?.value = false
+                todoList.forEach {
+                    it.isChecked = false
+                }
             }
         }
+
+        parentViewModel.isItemChecking.value = todoList.any { it.isChecked }
 
         if (position + 1 == todoList.size) {
             allSelectType =
@@ -108,6 +105,20 @@ class TodoViewAdapter(
 
         todoRowViewModel?.deleteId?.observe(parentLifecycleOwner, Observer {
             rowEventListener.clickDeleteIcon(it)
+        })
+
+        todoRowViewModel?.checkedId?.observe(parentLifecycleOwner, Observer { id ->
+
+            run loop@{
+                todoList.forEachIndexed { index, todo ->
+                    if (todo.todo.id.toString() == id) {
+                        todoRowViewModel?.isChecked?.value?.let { checked ->
+                            todoList[index].isChecked = checked
+                        }
+                        return@loop
+                    }
+                }
+            }
         })
     }
 
