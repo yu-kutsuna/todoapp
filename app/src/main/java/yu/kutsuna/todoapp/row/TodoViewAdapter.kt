@@ -27,15 +27,6 @@ class TodoViewAdapter(
     class TodoViewHolder(val binding: TodoRowItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     /**
-     * 全選択状態
-     */
-    enum class AllSelectType {
-        NONE,
-        ALL_SELECT,
-        ALL_CLEAR
-    }
-
-    /**
      * リストの削除ボタンが押下されたら
      * MainActivityに通知する
      */
@@ -59,27 +50,6 @@ class TodoViewAdapter(
     override fun getItemCount(): Int = todoList.size
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        /**
-         * チェックボックスの初期化
-         * 一つでも選択されている場合は選択されていないチェックボックスを選択済みにする
-         * 全て選択されている場合は全てのチェックボックスの選択を解除する
-         */
-        when (allSelectType) {
-            AllSelectType.ALL_SELECT -> {
-                Log.d(TAG, "allSelect type ALL_SELECT todoListSize ${todoList.size}")
-                todoList.forEach {
-                    it.isChecked = true
-                }
-            }
-            AllSelectType.ALL_CLEAR,
-            AllSelectType.NONE -> {
-                Log.d(TAG, "allSelect type ALL_CLEAR or NONE")
-                todoList.forEach {
-                    it.isChecked = false
-                }
-            }
-        }
-
         /**
          * チェックボックスの初期化をしてからholderを更新する
          */
@@ -129,29 +99,35 @@ class TodoViewAdapter(
      */
     fun update(todoList: List<TodoModel>) {
         this.todoList = todoList
-        allSelectType = AllSelectType.NONE
+        checkBoxReset()
         notifyDataSetChanged()
     }
 
     /**
      * 全選択ボタン押下時の処理
-     * 全アイテムとチェック済みアイテムを比較し、
-     * 全選択状態を全て選択されていればALL_CLEAR、
-     * 選択されていないアイテムがあればALL_SELECTに設定して
+     * 未完了の全アイテムとチェック済みアイテムを比較し、
+     * 全てが選択済みの場合はtodoListのisCheckedを全てfalseにし、
+     * そうでない場合はisCheckedを全てtrueにする
      * 更新する
      */
     fun allSelect() {
-        allSelectType = if (todoList.filter { it.isChecked }.size < todoList.size) {
-            AllSelectType.ALL_SELECT
+        if (todoList.filter { it.isChecked }.size < todoList.size - todoList.filter { it.todo.isCompleted }.size) {
+            todoList.forEach {
+                it.isChecked = true
+            }
         } else {
-            AllSelectType.ALL_CLEAR
+            checkBoxReset()
         }
         notifyDataSetChanged()
     }
 
+    private fun checkBoxReset() {
+        todoList.forEach {
+            it.isChecked = false
+        }
+    }
+
     companion object {
         private const val TAG = "TodoViewAdapter"
-        var allSelectType =
-            AllSelectType.NONE
     }
 }
