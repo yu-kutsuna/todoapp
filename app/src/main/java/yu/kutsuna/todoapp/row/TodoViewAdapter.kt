@@ -10,12 +10,13 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import yu.kutsuna.todoapp.R
 import yu.kutsuna.todoapp.data.Todo
+import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.databinding.TodoRowItemBinding
 import yu.kutsuna.todoapp.main.MainViewModel
 
 
 class TodoViewAdapter(
-    private var todoList: List<Todo>,
+    private var todoList: List<TodoModel>,
     private val parentLifecycleOwner: LifecycleOwner,
     private val parentViewModel: MainViewModel,
     private val rowEventListener: RowEventListener
@@ -50,8 +51,8 @@ class TodoViewAdapter(
     override fun getItemCount(): Int = todoList.size
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        todoRowViewModel = TodoRowViewModel(todoList[position].id.toString())
-        holder.binding.todo = todoList[position]
+        todoRowViewModel = TodoRowViewModel(todoList[position].todo.id.toString())
+        holder.binding.todo = todoList[position].todo
         holder.binding.viewModel = todoRowViewModel
         holder.binding.lifecycleOwner = parentLifecycleOwner
 
@@ -62,20 +63,9 @@ class TodoViewAdapter(
          * アイテムが一つでもチェックされた時にクリアボタンを表示する
          */
         holder.binding.checkBox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                parentViewModel.checkedTodoList.add(todoList[position])
-            } else {
-                run loop@{
-                    parentViewModel.checkedTodoList.forEachIndexed { index, todo ->
-                        if (todo.id == todoList[position].id) {
-                            parentViewModel.checkedTodoList.removeAt(index)
-                            return@loop
-                        }
-                    }
-                }
-            }
-
-            parentViewModel.isItemChecking.value = parentViewModel.checkedTodoList.isNotEmpty()
+            Log.d(TAG, "OnCheckedChangeListener isChecked $isChecked position $position")
+            todoList[position].isChecked = isChecked
+            parentViewModel.isItemChecking.value = todoList.any { isChecked }
         }
 
         /**
@@ -84,9 +74,18 @@ class TodoViewAdapter(
          * 全て選択されている場合は全てのチェックボックスの選択を解除する
          */
         when (allSelectType) {
-            AllSelectType.ALL_SELECT -> todoRowViewModel?.isChecked?.value = true
-            AllSelectType.ALL_CLEAR -> todoRowViewModel?.isChecked?.value = false
-            AllSelectType.NONE -> todoRowViewModel?.isChecked?.value = false
+            AllSelectType.ALL_SELECT -> {
+                Log.d(TAG, "allSelect type ALL_SELECT")
+                todoRowViewModel?.isChecked?.value = true
+            }
+            AllSelectType.ALL_CLEAR -> {
+                Log.d(TAG, "allSelect type ALL_CLEAR")
+                todoRowViewModel?.isChecked?.value = false
+            }
+            AllSelectType.NONE -> {
+                Log.d(TAG, "allSelect type NONE")
+                todoRowViewModel?.isChecked?.value = false
+            }
         }
 
         if (position + 1 == todoList.size) {
@@ -97,7 +96,7 @@ class TodoViewAdapter(
         /**
          * 完了済みのアイテムに取り消し線をつける
          */
-        if (todoList[position].isCompleted) {
+        if (todoList[position].todo.isCompleted) {
             val paint = holder.binding.todoValue.paint
             paint.flags = holder.binding.todoValue.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             paint.isAntiAlias = true
@@ -115,7 +114,7 @@ class TodoViewAdapter(
     /**
      * リスト更新処理
      */
-    fun update(todoList: List<Todo>) {
+    fun update(todoList: List<TodoModel>) {
         this.todoList = todoList
         notifyDataSetChanged()
     }
@@ -124,8 +123,8 @@ class TodoViewAdapter(
      * 全選択ボタン押下時の処理
      */
     fun allSelect() {
-        Log.d(TAG, "allSelect checkedListSize ${parentViewModel.checkedTodoList.size } , todoListSize ${todoList.size}")
-        allSelectType = if (parentViewModel.checkedTodoList.size < todoList.size) {
+        Log.d(TAG, "allSelect checkedListSize ${ todoList.filter { it.isChecked }.size} , todoListSize ${todoList.size}")
+        allSelectType = if (todoList.filter { it.isChecked }.size < todoList.size) {
             AllSelectType.ALL_SELECT
         } else {
             AllSelectType.ALL_CLEAR

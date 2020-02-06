@@ -8,6 +8,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import yu.kutsuna.todoapp.data.Todo
+import yu.kutsuna.todoapp.data.TodoModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,7 +28,7 @@ class MainViewModel: ViewModel() {
     var isViewingDeleteDialog: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var isItemChecking: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    var todoList: MutableLiveData<List<Todo>> = MutableLiveData()
+    var todoList: MutableLiveData<List<TodoModel>> = MutableLiveData()
     var itemCountText: MutableLiveData<String> = MutableLiveData()
     var checkedTodoList: MutableList<Todo> = mutableListOf()
 
@@ -217,22 +218,34 @@ class MainViewModel: ViewModel() {
     /**
      * 全てのTodoをリストで取得する
      */
-    private fun getAllTodoList(): List<Todo> {
-        return repository.getTodoList().reversed()
+    private fun getAllTodoList(): List<TodoModel> {
+        val todoModelList = mutableListOf<TodoModel>()
+        repository.getTodoList().reversed().forEach {
+            todoModelList.add(TodoModel(it, false))
+        }
+        return todoModelList
     }
 
     /**
      * 未完了のTodoをリストで取得する
      */
-    private fun getActiveTodoList(): List<Todo> {
-        return repository.getActiveTodoList().reversed()
+    private fun getActiveTodoList(): List<TodoModel> {
+        val todoModelList = mutableListOf<TodoModel>()
+        repository.getActiveTodoList().reversed().forEach {
+            todoModelList.add(TodoModel(it, false))
+        }
+        return todoModelList
     }
 
     /**
      * 完了済みのTodoをリストで取得する
      */
-    private fun getCompletedTodoList(): List<Todo> {
-        return repository.getCompletedTodoList().reversed()
+    private fun getCompletedTodoList(): List<TodoModel> {
+        val todoModelList = mutableListOf<TodoModel>()
+        repository.getCompletedTodoList().reversed().forEach {
+            todoModelList.add(TodoModel(it, false))
+        }
+        return todoModelList
     }
 
     /**
