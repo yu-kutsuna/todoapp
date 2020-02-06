@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import yu.kutsuna.todoapp.data.DataBase
 
-class TodoApplication: Application() {
+class TodoApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()

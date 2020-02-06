@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         binding = (DataBindingUtil.setContentView(this,
-            R.layout.activity_main
+                R.layout.activity_main
         ) as ActivityMainBinding).apply {
             lifecycleOwner = this@MainActivity
             viewModel = mainViewModel
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
              * EditTextの入力イベント
              * Addボタンの出しわけに使用
              */
-            todoText.addTextChangedListener(object: TextWatcher {
+            todoText.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                 }
 
@@ -62,19 +62,19 @@ class MainActivity : AppCompatActivity() {
          * また、リスト更新時にはキーボードを隠す
          */
         mainViewModel.todoList.observe(this, Observer { todoList ->
-            if(binding.recyclerView.adapter == null) {
+            if (binding.recyclerView.adapter == null) {
                 binding.lifecycleOwner?.let {
                     binding.recyclerView.adapter =
-                        TodoViewAdapter(
-                            todoList,
-                            it,
-                            mainViewModel,
-                            object: TodoViewAdapter.RowEventListener{
-                                override fun clickDeleteIcon(id: String) {
-                                    mainViewModel.clickDeleteIcon(id)
-                                }
-                            }
-                        )
+                            TodoViewAdapter(
+                                    todoList,
+                                    it,
+                                    mainViewModel,
+                                    object : TodoViewAdapter.RowEventListener {
+                                        override fun clickDeleteIcon(id: String) {
+                                            mainViewModel.clickDeleteIcon(id)
+                                        }
+                                    }
+                            )
                 }
                 binding.recyclerView.layoutManager = LinearLayoutManager(this)
             } else {

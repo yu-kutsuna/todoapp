@@ -50,9 +50,6 @@ class TodoViewAdapter(
     override fun getItemCount(): Int = todoList.size
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        /**
-         * チェックボックスの初期化をしてからholderを更新する
-         */
         todoRowViewModel = TodoRowViewModel(todoList[position]).apply { init() }
         holder.binding.viewModel = todoRowViewModel
         holder.binding.lifecycleOwner = parentLifecycleOwner
@@ -68,7 +65,7 @@ class TodoViewAdapter(
         holder.binding.checkBox.setOnCheckedChangeListener { _, _ ->
             val checkedTodoList = mutableListOf<Todo>()
             todoList.forEach {
-                if(it.isChecked) {
+                if (it.isChecked) {
                     checkedTodoList.add(it.todo)
                 }
             }
@@ -108,7 +105,7 @@ class TodoViewAdapter(
      * 全選択ボタン押下時の処理
      * 未完了の全アイテムとチェック済みアイテムを比較し、
      * 全てが選択済みの場合はtodoListのisCheckedを全てfalseにし、
-     * そうでない場合はisCheckedを全てtrueにする
+     * そうでない場合はisCheckedを全てtrueにして
      * 更新する
      */
     fun allSelect() {

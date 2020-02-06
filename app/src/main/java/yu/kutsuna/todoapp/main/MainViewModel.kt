@@ -12,7 +12,7 @@ import yu.kutsuna.todoapp.data.TodoModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainViewModel: ViewModel() {
+class MainViewModel : ViewModel() {
 
     /**
      * フッター選択状態を判別するためのEnum
@@ -86,21 +86,21 @@ class MainViewModel: ViewModel() {
         checkedTodoList = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {
             isLoading.value = true
-            todoList.value  =
-                withContext(Dispatchers.Default) {
-                    selectedType.value?.let {
-                        when (it) {
-                            SelectedType.ALL -> getAllTodoList()
-                            SelectedType.ACTIVE -> getActiveTodoList()
-                            SelectedType.COMPLETED -> {
-                                getCompletedTodoList()
+            todoList.value =
+                    withContext(Dispatchers.Default) {
+                        selectedType.value?.let {
+                            when (it) {
+                                SelectedType.ALL -> getAllTodoList()
+                                SelectedType.ACTIVE -> getActiveTodoList()
+                                SelectedType.COMPLETED -> {
+                                    getCompletedTodoList()
+                                }
                             }
                         }
                     }
-                }
 
             todoList.value?.let {
-                if(selectedType.value == SelectedType.ALL) {
+                if (selectedType.value == SelectedType.ALL) {
                     isListExist.value = !it.isNullOrEmpty()
                 }
                 itemCountText.value = "${it.size} items"
@@ -209,7 +209,7 @@ class MainViewModel: ViewModel() {
             withContext(Dispatchers.Default) {
                 checkedTodoList.forEach {
                     // 未完了のアイテムのみ処理する
-                    if(!it.isCompleted) {
+                    if (!it.isCompleted) {
                         repository.updateCompleted(it.id.toString(), getCompletedDate())
                     }
                 }
@@ -256,14 +256,14 @@ class MainViewModel: ViewModel() {
      * 追加日時の取得
      */
     private fun getAddedDate(): String {
-        return "Added: ${ getNowDate() }"
+        return "Added: ${getNowDate()}"
     }
 
     /**
      * 完了日時の取得
      */
     private fun getCompletedDate(): String {
-        return "Completed: ${ getNowDate() }"
+        return "Completed: ${getNowDate()}"
     }
 
     /**

@@ -4,10 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="yu.kutsuna.todoapp.main.MainViewModel" />
+
         <import type="android.view.View" />
+
         <import type="yu.kutsuna.todoapp.main.MainViewModel.SelectedType" />
     </data>
 
@@ -62,9 +65,9 @@
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:hint="@string/add_todo_text_hint"
+                android:inputType="text"
                 android:maxLines="1"
                 android:minLines="1"
-                android:inputType="text"
                 android:textColorHint="@color/gray"
                 app:layout_constraintBottom_toTopOf="@id/divider"
                 app:layout_constraintEnd_toStartOf="@id/add_button"
