@@ -1,17 +1,19 @@
 package yu.kutsuna.todoapp.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import yu.kutsuna.todoapp.R
-import yu.kutsuna.todoapp.row.TodoViewAdapter
 import yu.kutsuna.todoapp.databinding.ActivityMainBinding
 import yu.kutsuna.todoapp.hideKeyboard
+import yu.kutsuna.todoapp.row.TodoViewAdapter
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -44,6 +46,7 @@ class MainActivity : AppCompatActivity() {
 
             })
         }
+        (binding.recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         observeViewModel()
         mainViewModel.init()
     }

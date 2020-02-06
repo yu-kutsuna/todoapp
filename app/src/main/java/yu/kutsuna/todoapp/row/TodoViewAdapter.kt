@@ -26,12 +26,19 @@ class TodoViewAdapter(
 
     class TodoViewHolder(val binding: TodoRowItemBinding) : RecyclerView.ViewHolder(binding.root)
 
+    /**
+     * 全選択状態
+     */
     enum class AllSelectType {
         NONE,
         ALL_SELECT,
         ALL_CLEAR
     }
 
+    /**
+     * リストの削除ボタンが押下されたら
+     * MainActivityに通知する
+     */
     interface RowEventListener {
         fun clickDeleteIcon(id: String)
     }
@@ -53,7 +60,7 @@ class TodoViewAdapter(
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         /**
-         * 全選択処理
+         * チェックボックスの初期化
          * 一つでも選択されている場合は選択されていないチェックボックスを選択済みにする
          * 全て選択されている場合は全てのチェックボックスの選択を解除する
          */
@@ -73,12 +80,21 @@ class TodoViewAdapter(
             }
         }
 
+        /**
+         * チェックボックスの初期化をしてからholderを更新する
+         */
         todoRowViewModel = TodoRowViewModel(todoList[position]).apply { init() }
         holder.binding.viewModel = todoRowViewModel
         holder.binding.lifecycleOwner = parentLifecycleOwner
+        holder.binding.executePendingBindings()
 
         Log.d(TAG, "onBindViewHolder position $position isChecked ${todoList[position].isChecked}")
 
+        /**
+         * チェックボックスのイベントリスナー
+         * イベントを検知したらチェックされているアイテムのみをリスト化して
+         * MainViewModelに渡す
+         */
         holder.binding.checkBox.setOnCheckedChangeListener { _, _ ->
             val checkedTodoList = mutableListOf<Todo>()
             todoList.forEach {
@@ -119,9 +135,12 @@ class TodoViewAdapter(
 
     /**
      * 全選択ボタン押下時の処理
+     * 全アイテムとチェック済みアイテムを比較し、
+     * 全選択状態を全て選択されていればALL_CLEAR、
+     * 選択されていないアイテムがあればALL_SELECTに設定して
+     * 更新する
      */
     fun allSelect() {
-        Log.d(TAG, "allSelect checkedListSize ${ todoList.filter { it.isChecked }.size} , todoListSize ${todoList.size}")
         allSelectType = if (todoList.filter { it.isChecked }.size < todoList.size) {
             AllSelectType.ALL_SELECT
         } else {
