@@ -18,6 +18,7 @@ class TodoRowViewModel(val todo: TodoModel): ViewModel() {
         date.value = todo.todo.updateDate
         isChecked.value = todo.isChecked
         id = todo.todo.id
+        isCompleted.value = todo.todo.isCompleted
     }
 
     /**

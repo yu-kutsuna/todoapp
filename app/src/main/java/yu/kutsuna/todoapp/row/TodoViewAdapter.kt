@@ -80,11 +80,9 @@ class TodoViewAdapter(
             val paint = holder.binding.todoValue.paint
             paint.flags = holder.binding.todoValue.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             paint.isAntiAlias = true
-            todoRowViewModel?.isCompleted?.value = true
         } else {
             val paint = holder.binding.todoValue.paint
             paint.flags = 0
-            todoRowViewModel?.isCompleted?.value = false
         }
 
         todoRowViewModel?.deleteId?.observe(parentLifecycleOwner, Observer {
