@@ -87,6 +87,7 @@ class TodoViewAdapter(
         } else {
             val paint = holder.binding.todoValue.paint
             paint.flags = 0
+            todoRowViewModel?.isCompleted?.value = false
         }
 
         todoRowViewModel?.deleteId?.observe(parentLifecycleOwner, Observer {
