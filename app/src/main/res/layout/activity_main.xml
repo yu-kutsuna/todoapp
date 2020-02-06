@@ -64,6 +64,7 @@
                 android:hint="@string/add_todo_text_hint"
                 android:maxLines="1"
                 android:minLines="1"
+                android:inputType="text"
                 android:textColorHint="@color/gray"
                 app:layout_constraintBottom_toTopOf="@id/divider"
                 app:layout_constraintEnd_toStartOf="@id/add_button"
