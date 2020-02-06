@@ -65,7 +65,7 @@ class TodoViewAdapter(
         holder.binding.checkBox.setOnCheckedChangeListener { _, _ ->
             val checkedTodoList = mutableListOf<Todo>()
             todoList.forEach {
-                if (it.isChecked) {
+                if (it.isChecked && !it.todo.isCompleted) {
                     checkedTodoList.add(it.todo)
                 }
             }
