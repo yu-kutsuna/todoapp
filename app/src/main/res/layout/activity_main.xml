@@ -130,7 +130,6 @@
                     android:id="@+id/item_count"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
                     android:gravity="center"
                     android:text="@{viewModel.itemCountText}"
                     android:textSize="12sp"
@@ -142,7 +141,7 @@
 
                 <TextView
                     android:id="@+id/all"
-                    android:layout_width="80dp"
+                    android:layout_width="70dp"
                     android:layout_height="0dp"
                     android:background="@{viewModel.selectedType == SelectedType.ALL? @drawable/gray : null}"
                     android:gravity="center"
@@ -155,7 +154,7 @@
 
                 <TextView
                     android:id="@+id/active"
-                    android:layout_width="80dp"
+                    android:layout_width="70dp"
                     android:layout_height="0dp"
                     android:background="@{viewModel.selectedType == SelectedType.ACTIVE? @drawable/gray : null}"
                     android:gravity="center"
@@ -163,12 +162,12 @@
                     android:text="@string/active"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/completed"
-                    app:layout_constraintStart_toEndOf="@id/active"
+                    app:layout_constraintStart_toEndOf="@id/all"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/completed"
-                    android:layout_width="80dp"
+                    android:layout_width="70dp"
                     android:layout_height="0dp"
                     android:background="@{viewModel.selectedType == SelectedType.COMPLETED? @drawable/gray : null}"
                     android:gravity="center"
@@ -181,7 +180,7 @@
 
                 <TextView
                     android:id="@+id/clear_completed"
-                    android:layout_width="80dp"
+                    android:layout_width="70dp"
                     android:layout_height="0dp"
                     android:gravity="center"
                     android:onClick="@{viewModel::clickClear}"
