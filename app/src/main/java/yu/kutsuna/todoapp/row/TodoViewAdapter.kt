@@ -15,10 +15,10 @@ import yu.kutsuna.todoapp.main.MainViewModel
 
 
 class TodoViewAdapter(
-    private var todoList: List<TodoModel>,
-    private val parentLifecycleOwner: LifecycleOwner,
-    private val parentViewModel: MainViewModel,
-    private val rowEventListener: RowEventListener
+        private var todoList: List<TodoModel>,
+        private val parentLifecycleOwner: LifecycleOwner,
+        private val parentViewModel: MainViewModel,
+        private val rowEventListener: RowEventListener
 ) : RecyclerView.Adapter<TodoViewAdapter.TodoViewHolder>() {
     private var todoRowViewModel: TodoRowViewModel? = null
 
@@ -33,14 +33,14 @@ class TodoViewAdapter(
     }
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+            parent: ViewGroup,
+            viewType: Int
     ): TodoViewHolder {
         val binding = DataBindingUtil.inflate<TodoRowItemBinding>(
-            LayoutInflater.from(parent.context),
-            R.layout.todo_row_item,
-            parent,
-            false
+                LayoutInflater.from(parent.context),
+                R.layout.todo_row_item,
+                parent,
+                false
         )
         return TodoViewHolder(binding)
     }
@@ -84,7 +84,7 @@ class TodoViewAdapter(
          */
         todoRowViewModel?.checkedId?.observe(parentLifecycleOwner, Observer { checkedId ->
             run loop@{
-                todoList.forEachIndexed { _, todo ->
+                todoList.forEach { todo ->
                     if (todo.todo.id == checkedId) {
                         todo.isChecked = !todo.isChecked
                         return@loop
@@ -115,7 +115,7 @@ class TodoViewAdapter(
     fun allSelect() {
         if (todoList.filter { it.isChecked }.size < todoList.size - todoList.filter { it.todo.isCompleted }.size) {
             todoList.forEach {
-                if(!it.todo.isCompleted) {
+                if (!it.todo.isCompleted) {
                     it.isChecked = true
                 }
             }
@@ -128,7 +128,7 @@ class TodoViewAdapter(
 
     private fun checkBoxReset() {
         todoList.forEach {
-            if(!it.todo.isCompleted) {
+            if (!it.todo.isCompleted) {
                 it.isChecked = false
             }
         }
