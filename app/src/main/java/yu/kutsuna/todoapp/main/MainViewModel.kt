@@ -30,7 +30,7 @@ class MainViewModel : ViewModel() {
     var isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     var todoList: MutableLiveData<List<TodoModel>> = MutableLiveData()
     var itemCountText: MutableLiveData<String> = MutableLiveData()
-    var checkedTodoList: MutableList<Todo> = mutableListOf()
+    var checkedTodoList: MutableList<TodoModel> = mutableListOf()
         set(value) {
             field = value
             isItemChecking.value = field.isNotEmpty()
@@ -144,7 +144,7 @@ class MainViewModel : ViewModel() {
             // チェック済みアイテムが削除対象の場合はチェック済みアイテムリストから除外する
             run loop@{
                 checkedTodoList.forEachIndexed { index, todo ->
-                    if (todo.id.toString() == deleteId) {
+                    if (todo.todo.id.toString() == deleteId) {
                         checkedTodoList.removeAt(index)
                         return@loop
                     }
@@ -209,8 +209,8 @@ class MainViewModel : ViewModel() {
             withContext(Dispatchers.Default) {
                 checkedTodoList.forEach {
                     // 未完了のアイテムのみ処理する
-                    if (!it.isCompleted) {
-                        repository.updateCompleted(it.id.toString(), getCompletedDate())
+                    if (!it.todo.isCompleted) {
+                        repository.updateCompleted(it.todo.id.toString(), getCompletedDate())
                     }
                 }
             }

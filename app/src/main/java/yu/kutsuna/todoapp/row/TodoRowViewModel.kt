@@ -9,6 +9,7 @@ class TodoRowViewModel(val todo: TodoModel): ViewModel() {
     var isCompleted: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = true }
     var isChecked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply{value = false}
     var deleteId: MutableLiveData<String> = MutableLiveData()
+    var checkedId: MutableLiveData<Long> = MutableLiveData()
     var value: MutableLiveData<String> = MutableLiveData()
     var date: MutableLiveData<String> = MutableLiveData()
     var id: Long = 0
@@ -37,8 +38,8 @@ class TodoRowViewModel(val todo: TodoModel): ViewModel() {
         if(todo.todo.isCompleted) return
         isChecked.value?.let {
             isChecked.value = !it
-            todo.isChecked = !it
         }
+        checkedId.value = id
     }
 
 }

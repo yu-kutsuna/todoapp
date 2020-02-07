@@ -4,13 +4,11 @@ import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import yu.kutsuna.todoapp.R
-import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.databinding.TodoRowItemBinding
 import yu.kutsuna.todoapp.main.MainViewModel
@@ -57,21 +55,6 @@ class TodoViewAdapter(
 
         Log.d(TAG, "onBindViewHolder position $position isChecked ${todoList[position].isChecked}")
 
-        /**
-         * チェックボックスのイベントリスナー
-         * イベントを検知したらチェックされているアイテムのみをリスト化して
-         * MainViewModelに渡す
-         */
-        holder.binding.checkBox.setOnCheckedChangeListener { _, _ ->
-            val checkedTodoList = mutableListOf<Todo>()
-            todoList.forEach {
-                if (it.isChecked && !it.todo.isCompleted) {
-                    checkedTodoList.add(it.todo)
-                }
-            }
-            parentViewModel.checkedTodoList = checkedTodoList
-        }
-
 
         /**
          * 完了済みのアイテムに取り消し線をつける
@@ -85,8 +68,30 @@ class TodoViewAdapter(
             paint.flags = 0
         }
 
+        /**
+         * 削除ボタン押下時の処理
+         * EventListenerからMainActivityに通知する
+         */
         todoRowViewModel?.deleteId?.observe(parentLifecycleOwner, Observer {
             rowEventListener.clickDeleteIcon(it)
+        })
+
+
+        /**
+         * チェックボックス押下時に通知される
+         * フィールドのTodoList内の対応するアイテムのisCheckedを反転し、
+         * MainViewModelのチェック済みアイテムリストを更新する
+         */
+        todoRowViewModel?.checkedId?.observe(parentLifecycleOwner, Observer { checkedId ->
+            run loop@{
+                todoList.forEachIndexed { _, todo ->
+                    if (todo.todo.id == checkedId) {
+                        todo.isChecked = !todo.isChecked
+                        return@loop
+                    }
+                }
+            }
+            parentViewModel.checkedTodoList = todoList.filter { it.isChecked }.toMutableList()
         })
     }
 
@@ -104,22 +109,28 @@ class TodoViewAdapter(
      * 未完了の全アイテムとチェック済みアイテムを比較し、
      * 全てが選択済みの場合はtodoListのisCheckedを全てfalseにし、
      * そうでない場合はisCheckedを全てtrueにして
-     * 更新する
+     * MainViewModelのチェック済みアイテムリストを更新し、
+     * 最後に画面を更新する
      */
     fun allSelect() {
         if (todoList.filter { it.isChecked }.size < todoList.size - todoList.filter { it.todo.isCompleted }.size) {
             todoList.forEach {
-                it.isChecked = true
+                if(!it.todo.isCompleted) {
+                    it.isChecked = true
+                }
             }
         } else {
             checkBoxReset()
         }
+        parentViewModel.checkedTodoList = todoList.filter { it.isChecked }.toMutableList()
         notifyDataSetChanged()
     }
 
     private fun checkBoxReset() {
         todoList.forEach {
-            it.isChecked = false
+            if(!it.todo.isCompleted) {
+                it.isChecked = false
+            }
         }
     }
 
