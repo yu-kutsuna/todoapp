@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import yu.kutsuna.todoapp.R
+import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.databinding.ActivityMainBinding
 import yu.kutsuna.todoapp.hideKeyboard
 import yu.kutsuna.todoapp.row.TodoViewAdapter
@@ -62,36 +63,86 @@ class MainActivity : AppCompatActivity() {
          * また、リスト更新時にはキーボードを隠す
          */
         mainViewModel.todoList.observe(this, Observer { todoList ->
-            if (binding.recyclerView.adapter == null) {
-                binding.lifecycleOwner?.let {
-                    binding.recyclerView.adapter =
-                            TodoViewAdapter(
-                                    todoList,
-                                    it,
-                                    mainViewModel,
-                                    object : TodoViewAdapter.RowEventListener {
-                                        override fun clickDeleteIcon(id: String) {
-                                            mainViewModel.clickDeleteIcon(id)
-                                        }
-                                    }
-                            )
-                }
-                binding.recyclerView.layoutManager = LinearLayoutManager(this)
-            } else {
-                (binding.recyclerView.adapter as TodoViewAdapter).update(todoList)
-            }
+            updateList(todoList)
             binding.todoText.setText("")
             hideKeyboard()
         })
 
         /**
          * 全選択ボタン押下時の処理
-         * RecyclerView.Adapterから全選択を行う
+         * 未完了の全アイテムとチェック済みアイテムを比較し、
+         * 全てが選択済みの場合はtodoListのisCheckedを全てfalseにし、
+         * そうでない場合はisCheckedを全てtrueにして
+         * チェック済みアイテムリストを更新し、
+         * 最後にListを更新する
          */
         mainViewModel.isAllSelectClicked.observe(this, Observer {
-            binding.recyclerView.adapter?.let {
-                (it as TodoViewAdapter).allSelect()
+            mainViewModel.todoList.value?.let { todoList ->
+                if (todoList.filter { it.isChecked }.size < todoList.size - todoList.filter { it.todo.isCompleted }.size) {
+                    todoList.forEach {
+                        if (!it.todo.isCompleted) {
+                            it.isChecked = true
+                        }
+                    }
+                } else {
+                    checkBoxReset()
+                }
+                mainViewModel.checkedTodoList = todoList.filter { it.isChecked }.toMutableList()
             }
+
+            binding.recyclerView.adapter?.notifyDataSetChanged()
         })
+    }
+
+    /**
+     * リスト更新処理
+     */
+    private fun updateList(todoList: List<TodoModel>) {
+        checkBoxReset()
+        if (binding.recyclerView.adapter == null) {
+            binding.lifecycleOwner?.let { lifecycleOwner ->
+                binding.recyclerView.adapter =
+                        TodoViewAdapter(
+                                todoList,
+                                lifecycleOwner,
+                                object : TodoViewAdapter.RowEventListener {
+                                    /**
+                                     * 削除ボタン押下時の処理
+                                     */
+                                    override fun clickDeleteIcon(id: String) {
+                                        mainViewModel.clickDeleteIcon(id)
+                                    }
+
+                                    /**
+                                     * チェックボックス押下時に通知される
+                                     * フィールドのTodoList内の対応するアイテムのisCheckedを反転し、
+                                     * チェック済みアイテムリストを更新する
+                                     */
+                                    override fun clickCheckBox(checkedId: Long) {
+                                        run loop@{
+                                            todoList.forEach { todo ->
+                                                if (todo.todo.id == checkedId) {
+                                                    todo.isChecked = !todo.isChecked
+                                                    return@loop
+                                                }
+                                            }
+                                        }
+                                        mainViewModel.checkedTodoList = todoList.filter { it.isChecked }.toMutableList()
+                                    }
+                                }
+                        )
+            }
+            binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        } else {
+            (binding.recyclerView.adapter as TodoViewAdapter).update(todoList)
+        }
+    }
+
+    private fun checkBoxReset() {
+        mainViewModel.todoList.value?.forEach {
+            if (!it.todo.isCompleted) {
+                it.isChecked = false
+            }
+        }
     }
 }
