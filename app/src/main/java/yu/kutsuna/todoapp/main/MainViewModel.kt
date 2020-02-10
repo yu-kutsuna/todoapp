@@ -5,10 +5,10 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.data.TodoModel
-import yu.kutsuna.todoapp.isAllChecked
-import yu.kutsuna.todoapp.resetChecked
+import yu.kutsuna.todoapp.extensions.isAllChecked
+import yu.kutsuna.todoapp.extensions.resetChecked
+import yu.kutsuna.todoapp.extensions.setAllChecked
 import yu.kutsuna.todoapp.row.TodoViewAdapter
-import yu.kutsuna.todoapp.setAllChecked
 import java.text.SimpleDateFormat
 import java.util.*
 

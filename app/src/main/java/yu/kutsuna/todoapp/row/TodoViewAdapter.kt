@@ -10,6 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import yu.kutsuna.todoapp.*
 import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.databinding.TodoRowItemBinding
+import yu.kutsuna.todoapp.extensions.clearPaint
+import yu.kutsuna.todoapp.extensions.existCheckedItem
+import yu.kutsuna.todoapp.extensions.inversionChecked
+import yu.kutsuna.todoapp.extensions.setStrikeThrough
 
 class TodoViewAdapter(
     private val parentLifecycleOwner: LifecycleOwner,

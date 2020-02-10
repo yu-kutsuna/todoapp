@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import yu.kutsuna.todoapp.R
 import yu.kutsuna.todoapp.databinding.ActivityMainBinding
-import yu.kutsuna.todoapp.hideKeyboard
+import yu.kutsuna.todoapp.extensions.hideKeyboard
 import yu.kutsuna.todoapp.row.TodoViewAdapter
 
 
