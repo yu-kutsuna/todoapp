@@ -19,15 +19,15 @@ class MainViewModel : ViewModel() {
         ALL, ACTIVE, COMPLETED
     }
 
-    var selectedType: MutableLiveData<SelectedType> = MutableLiveData<SelectedType>().apply { value = SelectedType.ALL }
-    var isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    var isEmptyAddText: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    var isAllSelectClicked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    var isViewingDeleteDialog: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    var isItemChecking: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    var isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    var todoList: MutableLiveData<List<TodoModel>> = MutableLiveData()
-    var itemCountText: MutableLiveData<String> = MutableLiveData()
+    val selectedType: MutableLiveData<SelectedType> = MutableLiveData<SelectedType>().apply { value = SelectedType.ALL }
+    val isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    val isEmptyAddText: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    val isAllSelectClicked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    val isViewingDeleteDialog: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    val isItemChecking: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    val isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    val todoList: MutableLiveData<List<TodoModel>> = MutableLiveData()
+    val itemCountText: MutableLiveData<String> = MutableLiveData()
     var checkedTodoList: MutableList<TodoModel> = mutableListOf()
         set(value) {
             field = value
@@ -35,6 +35,7 @@ class MainViewModel : ViewModel() {
         }
 
     private lateinit var deleteId: String
+
     private var textValue: CharSequence? = null
     private val repository = MainRepository()
 

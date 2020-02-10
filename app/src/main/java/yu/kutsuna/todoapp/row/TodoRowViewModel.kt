@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModel
 import yu.kutsuna.todoapp.data.TodoModel
 
 class TodoRowViewModel(val todo: TodoModel): ViewModel() {
-    var isCompleted: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = true }
-    var isChecked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply{value = false}
-    var deleteId: MutableLiveData<String> = MutableLiveData()
-    var checkedId: MutableLiveData<Long> = MutableLiveData()
-    var value: MutableLiveData<String> = MutableLiveData()
-    var date: MutableLiveData<String> = MutableLiveData()
+    val isCompleted: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = true }
+    val isChecked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply{value = false}
+    val deleteId: MutableLiveData<String> = MutableLiveData()
+    val checkedId: MutableLiveData<Long> = MutableLiveData()
+    val value: MutableLiveData<String> = MutableLiveData()
+    val date: MutableLiveData<String> = MutableLiveData()
     var id: Long = 0
 
     fun init() {
