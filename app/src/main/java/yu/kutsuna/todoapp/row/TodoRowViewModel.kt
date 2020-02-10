@@ -29,7 +29,6 @@ class TodoRowViewModel(private val todoModel: TodoModel, private val position: I
      */
     fun clickCheck(view: View) {
         item.value?.let {
-            if (it.todo.isCompleted) return
             item.value = it.getInversionCheckedItem()
             checkedPosition.value = position
         }

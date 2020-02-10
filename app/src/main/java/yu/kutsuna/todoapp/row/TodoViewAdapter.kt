@@ -1,6 +1,5 @@
 package yu.kutsuna.todoapp.row
 
-import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -91,6 +90,9 @@ class TodoViewAdapter(
         notifyDataSetChanged()
     }
 
+    /**
+     * チェック済みリストの取得
+     */
     fun getCheckedList(): List<TodoModel> {
         return todoList.filter { it.isChecked }
     }

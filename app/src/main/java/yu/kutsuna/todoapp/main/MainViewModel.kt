@@ -55,21 +55,19 @@ class MainViewModel : ViewModel(), LifecycleObserver {
 
             todoList.value =
                 withContext(Dispatchers.Default) {
-                    selectedType.value?.let {
-                        when (it) {
+                    selectedType.value?.let { type ->
+                        when (type) {
                             SelectedType.ALL -> getAllTodoList()
                             SelectedType.ACTIVE -> getAllTodoList().filter { item -> !item.todo.isCompleted }
                             SelectedType.COMPLETED -> getAllTodoList().filter { item -> item.todo.isCompleted }
                         }
                     }
+                }?.apply {
+                    if (selectedType.value == SelectedType.ALL) {
+                        isListExist.value = this.isNotEmpty()
+                    }
+                    itemCountText.value = "${this.size} items"
                 }
-
-            todoList.value?.let {
-                if (selectedType.value == SelectedType.ALL) {
-                    isListExist.value = it.isNotEmpty()
-                }
-                itemCountText.value = "${it.size} items"
-            }
 
             isLoading.value = false
         }
@@ -83,11 +81,12 @@ class MainViewModel : ViewModel(), LifecycleObserver {
     fun clickAddButton(view: View) {
         viewModelScope.launch {
             isLoading.value = true
+
             withContext(Dispatchers.Default) {
                 repository.addTodo(Todo(0, textValue.toString(), false, "Added: ${getNowDate()}"))
             }
-            isLoading.value = false
 
+            isLoading.value = false
             updateList()
         }
     }

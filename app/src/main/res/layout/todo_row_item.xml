@@ -35,6 +35,7 @@
             android:layout_height="0dp"
             android:layout_margin="10dp"
             android:onClick="@{viewModel::clickCheck}"
+            android:clickable="@{viewModel.item.todo.isCompleted()? false : true}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/delete"
             app:layout_constraintStart_toEndOf="@id/checkBox"
