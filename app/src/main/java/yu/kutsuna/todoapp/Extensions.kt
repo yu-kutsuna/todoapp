@@ -31,24 +31,30 @@ fun List<TodoModel>.existCheckedItem(): Boolean {
 
 /**
  * TodoModelリストのチェック状態をリセットする
+ * return: チェック済みアイテムの存在可否（常にfalse）
  */
-fun List<TodoModel>.resetChecked() {
+fun List<TodoModel>.resetChecked(): Boolean {
     this.forEach {
         if (!it.todo.isCompleted) {
             it.isChecked = false
         }
     }
+
+    return false
 }
 
 /**
  * TodoModelリストのチェック状態を全てチェック済みにする
+ * return: チェック済みアイテムの存在可否（常にtrue）
  */
-fun List<TodoModel>.setAllChecked() {
+fun List<TodoModel>.setAllChecked(): Boolean {
     this.forEach {
         if (!it.todo.isCompleted) {
             it.isChecked = true
         }
     }
+
+    return true
 }
 
 /**

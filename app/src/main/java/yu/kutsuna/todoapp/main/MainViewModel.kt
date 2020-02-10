@@ -84,11 +84,11 @@ class MainViewModel : ViewModel(), LifecycleObserver {
      * リストが存在した場合はitemカウント数用のLiveDataも更新する
      */
     private fun updateList() {
-        todoList.value?.resetChecked()
-        isItemChecking.value = false
+        isItemChecking.value = todoList.value?.resetChecked()
 
         viewModelScope.launch {
             isLoading.value = true
+
             todoList.value =
                 withContext(Dispatchers.Default) {
                     selectedType.value?.let {
@@ -118,13 +118,12 @@ class MainViewModel : ViewModel(), LifecycleObserver {
      */
     fun clickAllSelect(view: View) {
         todoList.value?.let { todoList ->
-            if (todoList.isAllChecked()) {
+            isItemChecking.value = if (todoList.isAllChecked()) {
                 todoList.resetChecked()
             } else {
                 todoList.setAllChecked()
             }
         }
-        isItemChecking.value = todoList.value?.any { it.isChecked }
         adapter.notifyDataSetChanged()
     }
 
