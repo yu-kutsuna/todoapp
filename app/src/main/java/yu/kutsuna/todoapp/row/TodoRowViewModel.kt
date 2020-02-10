@@ -4,6 +4,8 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import yu.kutsuna.todoapp.data.TodoModel
+import yu.kutsuna.todoapp.getInversionCheckedItem
+import yu.kutsuna.todoapp.inversionChecked
 
 class TodoRowViewModel(private val todoModel: TodoModel, private val position: Int) : ViewModel() {
     val deleteId: MutableLiveData<String> = MutableLiveData()
@@ -29,7 +31,7 @@ class TodoRowViewModel(private val todoModel: TodoModel, private val position: I
     fun clickCheck(view: View) {
         item.value?.let {
             if (it.todo.isCompleted) return
-            item.value = TodoModel(it.todo, !it.isChecked)
+            item.value = it.getInversionCheckedItem()
             checkedPosition.value = position
         }
     }

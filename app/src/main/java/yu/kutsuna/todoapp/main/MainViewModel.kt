@@ -5,7 +5,10 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.data.TodoModel
+import yu.kutsuna.todoapp.isAllChecked
+import yu.kutsuna.todoapp.resetChecked
 import yu.kutsuna.todoapp.row.TodoViewAdapter
+import yu.kutsuna.todoapp.setAllChecked
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -81,8 +84,9 @@ class MainViewModel : ViewModel(), LifecycleObserver {
      * リストが存在した場合はitemカウント数用のLiveDataも更新する
      */
     private fun updateList() {
-        checkBoxReset()
+        todoList.value?.resetChecked()
         isItemChecking.value = false
+
         viewModelScope.launch {
             isLoading.value = true
             todoList.value =
@@ -114,27 +118,14 @@ class MainViewModel : ViewModel(), LifecycleObserver {
      */
     fun clickAllSelect(view: View) {
         todoList.value?.let { todoList ->
-            if (todoList.filter { it.isChecked }.size < todoList.size - todoList.filter { it.todo.isCompleted }.size) {
-                todoList.forEach {
-                    if (!it.todo.isCompleted) {
-                        it.isChecked = true
-                    }
-                }
+            if (todoList.isAllChecked()) {
+                todoList.resetChecked()
             } else {
-                checkBoxReset()
+                todoList.setAllChecked()
             }
         }
-
         isItemChecking.value = todoList.value?.any { it.isChecked }
         adapter.notifyDataSetChanged()
-    }
-
-    private fun checkBoxReset() {
-        todoList.value?.forEach {
-            if (!it.todo.isCompleted) {
-                it.isChecked = false
-            }
-        }
     }
 
     /**

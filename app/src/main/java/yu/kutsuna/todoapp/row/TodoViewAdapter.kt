@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import yu.kutsuna.todoapp.R
 import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.databinding.TodoRowItemBinding
+import yu.kutsuna.todoapp.existCheckedItem
+import yu.kutsuna.todoapp.inversionChecked
 
 class TodoViewAdapter(
     private val parentLifecycleOwner: LifecycleOwner,
@@ -53,6 +55,7 @@ class TodoViewAdapter(
 
         holder.binding.viewModel = todoRowViewModel
         holder.binding.lifecycleOwner = parentLifecycleOwner
+        holder.binding.executePendingBindings()
 
         /**
          * 完了済みのアイテムに取り消し線をつける
@@ -80,8 +83,8 @@ class TodoViewAdapter(
          * EventListenerからMainActivityに通知する
          */
         todoRowViewModel.checkedPosition.observe(parentLifecycleOwner, Observer { checkedPosition ->
-            todoList[checkedPosition].isChecked = !todoList[checkedPosition].isChecked
-            rowEventListener.clickCheckBox(todoList.any { it.isChecked })
+            todoList[checkedPosition].inversionChecked()
+            rowEventListener.clickCheckBox(todoList.existCheckedItem())
         })
     }
 
