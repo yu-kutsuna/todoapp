@@ -9,14 +9,6 @@ class MainRepository {
         return db.findAll()
     }
 
-    fun getActiveTodoList(): List<Todo> {
-        return db.findActive()
-    }
-
-    fun getCompletedTodoList(): List<Todo> {
-        return db.findCompleted()
-    }
-
     fun updateCompleted(id: String, date: String) {
         db.updateCompleted(id, date)
     }

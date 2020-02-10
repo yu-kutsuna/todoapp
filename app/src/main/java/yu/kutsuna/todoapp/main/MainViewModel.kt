@@ -25,7 +25,7 @@ class MainViewModel : ViewModel(), LifecycleObserver {
         MutableLiveData<SelectedType>().apply { value = SelectedType.ALL }
     val isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     val isEmptyAddText: MutableLiveData<Boolean> =
-        MutableLiveData<Boolean>().apply { value = false }
+        MutableLiveData<Boolean>().apply { value = true }
     val isViewingDeleteDialog: MutableLiveData<Boolean> =
         MutableLiveData<Boolean>().apply { value = false }
     val isItemChecking: MutableLiveData<Boolean> =
@@ -40,49 +40,13 @@ class MainViewModel : ViewModel(), LifecycleObserver {
     private var textValue: CharSequence? = null
     private val repository = MainRepository()
 
-
-    /**
-     * 初期化処理
-     */
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    fun init() {
-        isEmptyAddText.value = true
-        updateList()
-    }
-
-    /**
-     * EditTextの入力イベント検知時の処理
-     * 入力されたテキストを保持し、
-     * 空かどうかを判定するLiveDataを更新する(Addボタンの出しわけに使用)
-     */
-    fun addText(text: CharSequence?) {
-        textValue = text
-        isEmptyAddText.value = text.isNullOrEmpty()
-    }
-
-    /**
-     * Addボタン押下時の処理
-     * Repositoryからデータ追加を行い、
-     * リストを更新する
-     */
-    fun clickAddButton(view: View) {
-        viewModelScope.launch {
-            isLoading.value = true
-            withContext(Dispatchers.Default) {
-                repository.addTodo(Todo(0, textValue.toString(), false, getAddedDate()))
-            }
-            isLoading.value = false
-
-            updateList()
-        }
-    }
-
     /**
      * リストアップデート処理
      * 選択されたタイプに応じてRepositoryからTodoリストを取得する
      * ALLの場合のみ、フッター表示制御のためにLiveData:isListExitを更新する
      * リストが存在した場合はitemカウント数用のLiveDataも更新する
      */
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun updateList() {
         isItemChecking.value = todoList.value?.resetChecked()
 
@@ -94,17 +58,15 @@ class MainViewModel : ViewModel(), LifecycleObserver {
                     selectedType.value?.let {
                         when (it) {
                             SelectedType.ALL -> getAllTodoList()
-                            SelectedType.ACTIVE -> getActiveTodoList()
-                            SelectedType.COMPLETED -> {
-                                getCompletedTodoList()
-                            }
+                            SelectedType.ACTIVE -> getAllTodoList().filter { item -> !item.todo.isCompleted }
+                            SelectedType.COMPLETED -> getAllTodoList().filter { item -> item.todo.isCompleted }
                         }
                     }
                 }
 
             todoList.value?.let {
                 if (selectedType.value == SelectedType.ALL) {
-                    isListExist.value = !it.isNullOrEmpty()
+                    isListExist.value = it.isNotEmpty()
                 }
                 itemCountText.value = "${it.size} items"
             }
@@ -114,18 +76,22 @@ class MainViewModel : ViewModel(), LifecycleObserver {
     }
 
     /**
-     * 全選択ボタン押下時の処理
+     * Addボタン押下時の処理
+     * Repositoryからデータ追加を行い、
+     * リストを更新する
      */
-    fun clickAllSelect(view: View) {
-        todoList.value?.let { todoList ->
-            isItemChecking.value = if (todoList.isAllChecked()) {
-                todoList.resetChecked()
-            } else {
-                todoList.setAllChecked()
+    fun clickAddButton(view: View) {
+        viewModelScope.launch {
+            isLoading.value = true
+            withContext(Dispatchers.Default) {
+                repository.addTodo(Todo(0, textValue.toString(), false, "Added: ${getNowDate()}"))
             }
+            isLoading.value = false
+
+            updateList()
         }
-        adapter.notifyDataSetChanged()
     }
+
 
     /**
      * 削除アイコン押下時の処理
@@ -150,7 +116,9 @@ class MainViewModel : ViewModel(), LifecycleObserver {
             withContext(Dispatchers.Default) {
                 repository.deleteTodo(deleteId)
             }
+
             isLoading.value = false
+
             updateList()
             isViewingDeleteDialog.value = false
         }
@@ -163,6 +131,32 @@ class MainViewModel : ViewModel(), LifecycleObserver {
     fun clickDeleteDialogNo(view: View) {
         isViewingDeleteDialog.value = false
     }
+
+    /**
+     * EditTextの入力イベント検知時の処理
+     * 入力されたテキストを保持し、
+     * 空かどうかを判定するLiveDataを更新する(Addボタンの出しわけに使用)
+     */
+    fun addText(text: CharSequence?) {
+        textValue = text
+        isEmptyAddText.value = text.isNullOrEmpty()
+    }
+
+
+    /**
+     * 全選択ボタン押下時の処理
+     */
+    fun clickAllSelect(view: View) {
+        todoList.value?.let { todoList ->
+            isItemChecking.value = if (todoList.isAllChecked()) {
+                todoList.resetChecked()
+            } else {
+                todoList.setAllChecked()
+            }
+        }
+        adapter.notifyDataSetChanged()
+    }
+
 
     /**
      * フッター：All選択時の処理
@@ -206,7 +200,10 @@ class MainViewModel : ViewModel(), LifecycleObserver {
                 adapter.getCheckedList().forEach {
                     // 未完了のアイテムのみ処理する
                     if (!it.todo.isCompleted) {
-                        repository.updateCompleted(it.todo.id.toString(), getCompletedDate())
+                        repository.updateCompleted(
+                            it.todo.id.toString(),
+                            "Completed: ${getNowDate()}"
+                        )
                     }
                 }
             }
@@ -224,42 +221,6 @@ class MainViewModel : ViewModel(), LifecycleObserver {
             todoModelList.add(TodoModel(it, false))
         }
         return todoModelList
-    }
-
-    /**
-     * 未完了のTodoをリストで取得する
-     */
-    private fun getActiveTodoList(): List<TodoModel> {
-        val todoModelList = mutableListOf<TodoModel>()
-        repository.getActiveTodoList().reversed().forEach {
-            todoModelList.add(TodoModel(it, false))
-        }
-        return todoModelList
-    }
-
-    /**
-     * 完了済みのTodoをリストで取得する
-     */
-    private fun getCompletedTodoList(): List<TodoModel> {
-        val todoModelList = mutableListOf<TodoModel>()
-        repository.getCompletedTodoList().reversed().forEach {
-            todoModelList.add(TodoModel(it, false))
-        }
-        return todoModelList
-    }
-
-    /**
-     * 追加日時の取得
-     */
-    private fun getAddedDate(): String {
-        return "Added: ${getNowDate()}"
-    }
-
-    /**
-     * 完了日時の取得
-     */
-    private fun getCompletedDate(): String {
-        return "Completed: ${getNowDate()}"
     }
 
     /**
