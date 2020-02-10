@@ -2,8 +2,10 @@ package yu.kutsuna.todoapp
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Paint
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import yu.kutsuna.todoapp.data.TodoModel
 
 /**
@@ -78,4 +80,19 @@ fun TodoModel.inversionChecked() {
  */
 fun TodoModel.getInversionCheckedItem(): TodoModel {
     return TodoModel(this.todo, !this.isChecked)
+}
+
+/**
+ * TextViewに打ち消し線をつける
+ */
+fun TextView.setStrikeThrough() {
+    this.paint.flags = this.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+    this.paint.isAntiAlias = true
+}
+
+/**
+ * 打ち消し線を削除する
+ */
+fun TextView.clearPaint() {
+    this.paint.flags = 0
 }

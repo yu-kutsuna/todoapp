@@ -28,7 +28,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         // LiveData監視開始
-        observeViewModel()
+        mainViewModel.todoList.observe(this, Observer { todoList ->
+            (binding.recyclerView.adapter as TodoViewAdapter).update(todoList)
+            binding.todoText.setText("")
+            hideKeyboard()
+        })
 
         lifecycle.addObserver(mainViewModel)
 
@@ -47,7 +51,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
         })
 
-        // Adapterセット
+        // RecyclerViewのAdapterセット
         binding.recyclerView.adapter =
             TodoViewAdapter(this,
                 object : TodoViewAdapter.RowEventListener {
@@ -59,9 +63,8 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
                     }
 
                     /**
-                     * チェックボックス押下時に通知される
-                     * フィールドのTodoList内の対応するアイテムのisCheckedを反転し、
-                     * チェック済みアイテムリストを更新する
+                     * アイテムのチェックボックス押下時に通知される
+                     * チェック済みアイテムの存在可否をチェックしてViewを更新する
                      */
                     override fun clickCheckBox(isChecked: Boolean) {
                         mainViewModel.isItemChecking.value = isChecked
@@ -69,23 +72,8 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
                 }
             )
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        mainViewModel.adapter = binding.recyclerView.adapter as TodoViewAdapter
-    }
 
-    /**
-     * LiveData監視開始
-     */
-    private fun observeViewModel() {
-        /**
-         * リストに変更が加わった時の処理
-         * RecyclerViewのアダプターがnullの場合は初期処理をし、
-         * 存在している場合はアップデートのみ行う
-         * また、リスト更新時にはキーボードを隠す
-         */
-        mainViewModel.todoList.observe(this, Observer { todoList ->
-            (binding.recyclerView.adapter as TodoViewAdapter).update(todoList)
-            binding.todoText.setText("")
-            hideKeyboard()
-        })
+        // ViewModelにAdapterを渡す
+        mainViewModel.adapter = binding.recyclerView.adapter as TodoViewAdapter
     }
 }

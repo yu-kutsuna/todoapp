@@ -132,7 +132,6 @@ class MainViewModel : ViewModel(), LifecycleObserver {
         isViewingDeleteDialog.value = false
     }
 
-
     /**
      * クリアボタン押下時の処理
      * Repositoryから該当アイテムを完了済みにし、
@@ -170,6 +169,8 @@ class MainViewModel : ViewModel(), LifecycleObserver {
 
     /**
      * 全選択ボタン押下時の処理
+     * 未チェックアイテムが存在する場合は全てチェック済みに、
+     * 全てのアイテムがチェック済みの場合は全て未チェックに変更する
      */
     fun clickAllSelect(view: View) {
         todoList.value?.let { todoList ->

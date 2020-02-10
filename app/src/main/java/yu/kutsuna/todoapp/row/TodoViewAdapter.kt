@@ -8,11 +8,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import yu.kutsuna.todoapp.R
+import yu.kutsuna.todoapp.*
 import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.databinding.TodoRowItemBinding
-import yu.kutsuna.todoapp.existCheckedItem
-import yu.kutsuna.todoapp.inversionChecked
 
 class TodoViewAdapter(
     private val parentLifecycleOwner: LifecycleOwner,
@@ -61,12 +59,9 @@ class TodoViewAdapter(
          * 完了済みのアイテムに取り消し線をつける
          */
         if (todoList[position].todo.isCompleted) {
-            val paint = holder.binding.todoValue.paint
-            paint.flags = holder.binding.todoValue.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            paint.isAntiAlias = true
+            holder.binding.todoValue.setStrikeThrough()
         } else {
-            val paint = holder.binding.todoValue.paint
-            paint.flags = 0
+            holder.binding.todoValue.clearPaint()
         }
 
         /**
