@@ -17,7 +17,7 @@ class TodoViewAdapter(
         private val parentLifecycleOwner: LifecycleOwner,
         private val rowEventListener: RowEventListener
 ) : RecyclerView.Adapter<TodoViewAdapter.TodoViewHolder>() {
-    private var todoRowViewModel: TodoRowViewModel? = null
+    private lateinit var todoRowViewModel: TodoRowViewModel
 
     class TodoViewHolder(val binding: TodoRowItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -49,12 +49,9 @@ class TodoViewAdapter(
         Log.d(TAG, "onBindViewHolder")
 
         todoRowViewModel = TodoRowViewModel(todoList[position]).apply { init() }
+
         holder.binding.viewModel = todoRowViewModel
         holder.binding.lifecycleOwner = parentLifecycleOwner
-        holder.binding.executePendingBindings()
-
-        Log.d(TAG, "onBindViewHolder position $position isChecked ${todoList[position].isChecked}")
-
 
         /**
          * 完了済みのアイテムに取り消し線をつける
@@ -72,7 +69,7 @@ class TodoViewAdapter(
          * 削除ボタン押下時の処理
          * EventListenerからMainActivityに通知する
          */
-        todoRowViewModel?.deleteId?.observe(parentLifecycleOwner, Observer {
+        todoRowViewModel.deleteId.observe(parentLifecycleOwner, Observer {
             rowEventListener.clickDeleteIcon(it)
         })
 

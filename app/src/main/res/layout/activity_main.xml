@@ -9,6 +9,10 @@
             name="viewModel"
             type="yu.kutsuna.todoapp.main.MainViewModel" />
 
+        <variable
+            name="adapter"
+            type="yu.kutsuna.todoapp.row.TodoViewAdapter" />
+
         <import type="android.view.View" />
 
         <import type="yu.kutsuna.todoapp.main.MainViewModel.SelectedType" />

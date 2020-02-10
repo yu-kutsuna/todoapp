@@ -5,21 +5,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import yu.kutsuna.todoapp.data.TodoModel
 
-class TodoRowViewModel(val todo: TodoModel): ViewModel() {
+class TodoRowViewModel(private val item: TodoModel): ViewModel() {
     val isCompleted: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = true }
     val isChecked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply{value = false}
     val deleteId: MutableLiveData<String> = MutableLiveData()
     val checkedId: MutableLiveData<Long> = MutableLiveData()
     val value: MutableLiveData<String> = MutableLiveData()
     val date: MutableLiveData<String> = MutableLiveData()
-    var id: Long = 0
 
     fun init() {
-        value.value = todo.todo.value
-        date.value = todo.todo.updateDate
-        isChecked.value = todo.isChecked
-        id = todo.todo.id
-        isCompleted.value = todo.todo.isCompleted
+        value.value = item.todo.value
+        date.value = item.todo.updateDate
+        isChecked.value = item.isChecked
+        isCompleted.value = item.todo.isCompleted
     }
 
     /**
@@ -27,7 +25,7 @@ class TodoRowViewModel(val todo: TodoModel): ViewModel() {
      * MainViewModelに削除を通知する
      */
     fun clickDeleteIcon(view: View) {
-        deleteId.value = id.toString()
+        deleteId.value = item.todo.id.toString()
     }
 
     /**
@@ -35,11 +33,9 @@ class TodoRowViewModel(val todo: TodoModel): ViewModel() {
      * チェックボックスのチェック状態を反転する
      */
     fun clickCheck(view: View) {
-        if(todo.todo.isCompleted) return
-        isChecked.value?.let {
-            isChecked.value = !it
-        }
-        checkedId.value = id
+        if(item.todo.isCompleted) return
+        isChecked.value = isChecked.value?.let{ !it }
+        checkedId.value = item.todo.id
     }
 
 }

@@ -5,10 +5,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import yu.kutsuna.todoapp.R
 import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.databinding.ActivityMainBinding
@@ -16,40 +16,37 @@ import yu.kutsuna.todoapp.hideKeyboard
 import yu.kutsuna.todoapp.row.TodoViewAdapter
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LifecycleOwner {
     private lateinit var binding: ActivityMainBinding
-    private val mainViewModel: MainViewModel by lazy {
-        ViewModelProviders.of(this).get(MainViewModel::class.java)
-    }
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        binding = (DataBindingUtil.setContentView(this,
-                R.layout.activity_main
-        ) as ActivityMainBinding).apply {
-            lifecycleOwner = this@MainActivity
-            viewModel = mainViewModel
-            /**
-             * EditTextの入力イベント
-             * Addボタンの出しわけに使用
-             */
-            todoText.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
-                }
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                }
+        // ViewModel取得
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    mainViewModel.addText(s)
-                }
-
-            })
-        }
-        (binding.recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        // LiveData監視開始
         observeViewModel()
-        mainViewModel.init()
+
+        lifecycle.addObserver(mainViewModel)
+
+        binding.viewModel = mainViewModel
+        binding.lifecycleOwner = this
+        binding.todoText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                mainViewModel.addText(s)
+            }
+
+        })
     }
 
     /**

@@ -1,16 +1,14 @@
 package yu.kutsuna.todoapp.main
 
 import android.view.View
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.data.TodoModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainViewModel : ViewModel() {
+class MainViewModel : ViewModel(), LifecycleObserver {
 
     /**
      * フッター選択状態を判別するためのEnum
@@ -42,6 +40,7 @@ class MainViewModel : ViewModel() {
     /**
      * 初期化処理
      */
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun init() {
         isEmptyAddText.value = true
         updateList()
