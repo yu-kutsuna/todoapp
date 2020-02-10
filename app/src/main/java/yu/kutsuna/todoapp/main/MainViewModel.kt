@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.data.TodoModel
+import yu.kutsuna.todoapp.row.TodoViewAdapter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,25 +18,25 @@ class MainViewModel : ViewModel(), LifecycleObserver {
         ALL, ACTIVE, COMPLETED
     }
 
-    val selectedType: MutableLiveData<SelectedType> = MutableLiveData<SelectedType>().apply { value = SelectedType.ALL }
+    val selectedType: MutableLiveData<SelectedType> =
+        MutableLiveData<SelectedType>().apply { value = SelectedType.ALL }
     val isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    val isEmptyAddText: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    val isAllSelectClicked: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    val isViewingDeleteDialog: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    val isItemChecking: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    val isEmptyAddText: MutableLiveData<Boolean> =
+        MutableLiveData<Boolean>().apply { value = false }
+    val isViewingDeleteDialog: MutableLiveData<Boolean> =
+        MutableLiveData<Boolean>().apply { value = false }
+    val isItemChecking: MutableLiveData<Boolean> =
+        MutableLiveData<Boolean>().apply { value = false }
     val isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     val todoList: MutableLiveData<List<TodoModel>> = MutableLiveData()
     val itemCountText: MutableLiveData<String> = MutableLiveData()
-    var checkedTodoList: MutableList<TodoModel> = mutableListOf()
-        set(value) {
-            field = value
-            isItemChecking.value = field.isNotEmpty()
-        }
 
     private lateinit var deleteId: String
+    lateinit var adapter: TodoViewAdapter
 
     private var textValue: CharSequence? = null
     private val repository = MainRepository()
+
 
     /**
      * 初期化処理
@@ -80,22 +81,22 @@ class MainViewModel : ViewModel(), LifecycleObserver {
      * リストが存在した場合はitemカウント数用のLiveDataも更新する
      */
     private fun updateList() {
+        checkBoxReset()
         isItemChecking.value = false
-        checkedTodoList = mutableListOf()
         viewModelScope.launch {
             isLoading.value = true
             todoList.value =
-                    withContext(Dispatchers.Default) {
-                        selectedType.value?.let {
-                            when (it) {
-                                SelectedType.ALL -> getAllTodoList()
-                                SelectedType.ACTIVE -> getActiveTodoList()
-                                SelectedType.COMPLETED -> {
-                                    getCompletedTodoList()
-                                }
+                withContext(Dispatchers.Default) {
+                    selectedType.value?.let {
+                        when (it) {
+                            SelectedType.ALL -> getAllTodoList()
+                            SelectedType.ACTIVE -> getActiveTodoList()
+                            SelectedType.COMPLETED -> {
+                                getCompletedTodoList()
                             }
                         }
                     }
+                }
 
             todoList.value?.let {
                 if (selectedType.value == SelectedType.ALL) {
@@ -110,12 +111,29 @@ class MainViewModel : ViewModel(), LifecycleObserver {
 
     /**
      * 全選択ボタン押下時の処理
-     * LiveData：isAllSelectClickedを更新する
-     * isAllSelectClickedはActivityで監視
      */
     fun clickAllSelect(view: View) {
-        isAllSelectClicked.value?.let {
-            isAllSelectClicked.value = !it
+        todoList.value?.let { todoList ->
+            if (todoList.filter { it.isChecked }.size < todoList.size - todoList.filter { it.todo.isCompleted }.size) {
+                todoList.forEach {
+                    if (!it.todo.isCompleted) {
+                        it.isChecked = true
+                    }
+                }
+            } else {
+                checkBoxReset()
+            }
+        }
+
+        isItemChecking.value = todoList.value?.any { it.isChecked }
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun checkBoxReset() {
+        todoList.value?.forEach {
+            if (!it.todo.isCompleted) {
+                it.isChecked = false
+            }
         }
     }
 
@@ -138,16 +156,6 @@ class MainViewModel : ViewModel(), LifecycleObserver {
     fun clickDeleteDialogYes(view: View) {
         viewModelScope.launch {
             isLoading.value = true
-
-            // チェック済みアイテムが削除対象の場合はチェック済みアイテムリストから除外する
-            run loop@{
-                checkedTodoList.forEachIndexed { index, todo ->
-                    if (todo.todo.id.toString() == deleteId) {
-                        checkedTodoList.removeAt(index)
-                        return@loop
-                    }
-                }
-            }
 
             withContext(Dispatchers.Default) {
                 repository.deleteTodo(deleteId)
@@ -205,7 +213,7 @@ class MainViewModel : ViewModel(), LifecycleObserver {
         viewModelScope.launch(Dispatchers.Main) {
             isLoading.value = true
             withContext(Dispatchers.Default) {
-                checkedTodoList.forEach {
+                adapter.getCheckedList().forEach {
                     // 未完了のアイテムのみ処理する
                     if (!it.todo.isCompleted) {
                         repository.updateCompleted(it.todo.id.toString(), getCompletedDate())
@@ -268,7 +276,10 @@ class MainViewModel : ViewModel(), LifecycleObserver {
      * 現在日時の取得
      */
     private fun getNowDate(): String {
-        return SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(Date(System.currentTimeMillis()))
+        return SimpleDateFormat(
+            "yyyy/MM/dd HH:mm",
+            Locale.getDefault()
+        ).format(Date(System.currentTimeMillis()))
     }
 
     @ExperimentalCoroutinesApi

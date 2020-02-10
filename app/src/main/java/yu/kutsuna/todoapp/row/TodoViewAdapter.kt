@@ -13,10 +13,11 @@ import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.databinding.TodoRowItemBinding
 
 class TodoViewAdapter(
-        private var todoList: List<TodoModel>,
-        private val parentLifecycleOwner: LifecycleOwner,
-        private val rowEventListener: RowEventListener
+    private val parentLifecycleOwner: LifecycleOwner,
+    private val rowEventListener: RowEventListener
 ) : RecyclerView.Adapter<TodoViewAdapter.TodoViewHolder>() {
+
+    private lateinit var todoList: List<TodoModel>
     private lateinit var todoRowViewModel: TodoRowViewModel
 
     class TodoViewHolder(val binding: TodoRowItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -27,18 +28,18 @@ class TodoViewAdapter(
      */
     interface RowEventListener {
         fun clickDeleteIcon(id: String)
-        fun clickCheckBox(checkedId: Long)
+        fun clickCheckBox(isChecked: Boolean)
     }
 
     override fun onCreateViewHolder(
-            parent: ViewGroup,
-            viewType: Int
+        parent: ViewGroup,
+        viewType: Int
     ): TodoViewHolder {
         val binding = DataBindingUtil.inflate<TodoRowItemBinding>(
-                LayoutInflater.from(parent.context),
-                R.layout.todo_row_item,
-                parent,
-                false
+            LayoutInflater.from(parent.context),
+            R.layout.todo_row_item,
+            parent,
+            false
         )
         return TodoViewHolder(binding)
     }
@@ -48,7 +49,7 @@ class TodoViewAdapter(
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         Log.d(TAG, "onBindViewHolder")
 
-        todoRowViewModel = TodoRowViewModel(todoList[position]).apply { init() }
+        todoRowViewModel = TodoRowViewModel(todoList[position], position).apply { init() }
 
         holder.binding.viewModel = todoRowViewModel
         holder.binding.lifecycleOwner = parentLifecycleOwner
@@ -78,8 +79,9 @@ class TodoViewAdapter(
          * チェックボックス押下時に通知される
          * EventListenerからMainActivityに通知する
          */
-        todoRowViewModel?.checkedId?.observe(parentLifecycleOwner, Observer { checkedId ->
-            rowEventListener.clickCheckBox(checkedId)
+        todoRowViewModel.checkedPosition.observe(parentLifecycleOwner, Observer { checkedPosition ->
+            todoList[checkedPosition].isChecked = !todoList[checkedPosition].isChecked
+            rowEventListener.clickCheckBox(todoList.any { it.isChecked })
         })
     }
 
@@ -87,9 +89,12 @@ class TodoViewAdapter(
      * リスト更新処理
      */
     fun update(todoList: List<TodoModel>) {
-        Log.d(TAG, "update")
         this.todoList = todoList
         notifyDataSetChanged()
+    }
+
+    fun getCheckedList(): List<TodoModel> {
+        return todoList.filter { it.isChecked }
     }
 
     companion object {
