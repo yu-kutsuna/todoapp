@@ -132,6 +132,31 @@ class MainViewModel : ViewModel(), LifecycleObserver {
         isViewingDeleteDialog.value = false
     }
 
+
+    /**
+     * クリアボタン押下時の処理
+     * Repositoryから該当アイテムを完了済みにし、
+     * リストを更新する
+     */
+    fun clickClear(view: View) {
+        viewModelScope.launch(Dispatchers.Main) {
+            isLoading.value = true
+            withContext(Dispatchers.Default) {
+                adapter.getCheckedList().forEach {
+                    // 未完了のアイテムのみ処理する
+                    if (!it.todo.isCompleted) {
+                        repository.updateCompleted(
+                            it.todo.id.toString(),
+                            "Completed: ${getNowDate()}"
+                        )
+                    }
+                }
+            }
+            isLoading.value = false
+            updateList()
+        }
+    }
+
     /**
      * EditTextの入力イベント検知時の処理
      * 入力されたテキストを保持し、
@@ -186,30 +211,6 @@ class MainViewModel : ViewModel(), LifecycleObserver {
     fun clickCompleted(view: View) {
         selectedType.value = SelectedType.COMPLETED
         updateList()
-    }
-
-    /**
-     * クリアボタン押下時の処理
-     * Repositoryから該当アイテムを完了済みにし、
-     * リストを更新する
-     */
-    fun clickClear(view: View) {
-        viewModelScope.launch(Dispatchers.Main) {
-            isLoading.value = true
-            withContext(Dispatchers.Default) {
-                adapter.getCheckedList().forEach {
-                    // 未完了のアイテムのみ処理する
-                    if (!it.todo.isCompleted) {
-                        repository.updateCompleted(
-                            it.todo.id.toString(),
-                            "Completed: ${getNowDate()}"
-                        )
-                    }
-                }
-            }
-            isLoading.value = false
-            updateList()
-        }
     }
 
     /**

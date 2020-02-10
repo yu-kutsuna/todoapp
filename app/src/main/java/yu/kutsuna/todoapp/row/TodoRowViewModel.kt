@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.getInversionCheckedItem
-import yu.kutsuna.todoapp.inversionChecked
 
 class TodoRowViewModel(private val todoModel: TodoModel, private val position: Int) : ViewModel() {
     val deleteId: MutableLiveData<String> = MutableLiveData()
