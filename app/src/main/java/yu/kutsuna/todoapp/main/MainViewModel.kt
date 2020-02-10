@@ -3,10 +3,8 @@ package yu.kutsuna.todoapp.main
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.*
 import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.data.TodoModel
 import java.text.SimpleDateFormat
@@ -64,7 +62,7 @@ class MainViewModel : ViewModel() {
      * リストを更新する
      */
     fun clickAddButton(view: View) {
-        GlobalScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             isLoading.value = true
             withContext(Dispatchers.Default) {
                 repository.addTodo(Todo(0, textValue.toString(), false, getAddedDate()))
@@ -84,7 +82,7 @@ class MainViewModel : ViewModel() {
     private fun updateList() {
         isItemChecking.value = false
         checkedTodoList = mutableListOf()
-        GlobalScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             isLoading.value = true
             todoList.value =
                     withContext(Dispatchers.Default) {
@@ -138,7 +136,7 @@ class MainViewModel : ViewModel() {
      * リストを更新する
      */
     fun clickDeleteDialogYes(view: View) {
-        GlobalScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             isLoading.value = true
 
             // チェック済みアイテムが削除対象の場合はチェック済みアイテムリストから除外する
@@ -204,7 +202,7 @@ class MainViewModel : ViewModel() {
      * リストを更新する
      */
     fun clickClear(view: View) {
-        GlobalScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.Main) {
             isLoading.value = true
             withContext(Dispatchers.Default) {
                 checkedTodoList.forEach {
@@ -271,5 +269,11 @@ class MainViewModel : ViewModel() {
      */
     private fun getNowDate(): String {
         return SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(Date(System.currentTimeMillis()))
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
     }
 }
