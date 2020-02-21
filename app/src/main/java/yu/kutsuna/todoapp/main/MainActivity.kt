@@ -10,7 +10,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import yu.kutsuna.todoapp.R
+import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.databinding.ActivityMainBinding
+import yu.kutsuna.todoapp.extensions.existCheckedItem
 import yu.kutsuna.todoapp.extensions.hideKeyboard
 import yu.kutsuna.todoapp.row.TodoViewAdapter
 
@@ -25,7 +27,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         // ViewModel取得
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProviders.of(this, MainViewModel.Factory(object: MainViewModel.Callback {
+            override fun finishAllClear() {
+                binding.recyclerView.adapter?.notifyDataSetChanged()
+            }
+        })).get(MainViewModel::class.java)
 
         // LiveData監視開始
         mainViewModel.todoList.observe(this, Observer { todoList ->
@@ -66,14 +72,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
                      * アイテムのチェックボックス押下時に通知される
                      * チェック済みアイテムの存在可否をチェックしてViewを更新する
                      */
-                    override fun clickCheckBox(isChecked: Boolean) {
-                        mainViewModel.isItemChecking.value = isChecked
+                    override fun clickCheckBox(checkedList: List<TodoModel>) {
+                        mainViewModel.checkedItemList = checkedList
                     }
                 }
             )
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-
-        // ViewModelにAdapterを渡す
-        mainViewModel.adapter = binding.recyclerView.adapter as TodoViewAdapter
     }
 }

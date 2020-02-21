@@ -5,20 +5,35 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.data.TodoModel
+import yu.kutsuna.todoapp.extensions.existCheckedItem
 import yu.kutsuna.todoapp.extensions.isAllChecked
 import yu.kutsuna.todoapp.extensions.resetChecked
 import yu.kutsuna.todoapp.extensions.setAllChecked
-import yu.kutsuna.todoapp.row.TodoViewAdapter
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainViewModel : ViewModel(), LifecycleObserver {
+class MainViewModel(private val callback: Callback) : ViewModel(), LifecycleObserver {
 
     /**
      * フッター選択状態を判別するためのEnum
      */
     enum class SelectedType {
         ALL, ACTIVE, COMPLETED
+    }
+
+    /**
+     * Activityへのコールバック
+     * Contextが必要な処理やAndroid独自のクラスを使う処理は
+     * Activityで行う
+     */
+    interface Callback {
+        fun finishAllClear()
+    }
+
+    class Factory constructor(private val callback: Callback): ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+            MainViewModel(callback) as T
     }
 
     val selectedType: MutableLiveData<SelectedType> =
@@ -34,8 +49,13 @@ class MainViewModel : ViewModel(), LifecycleObserver {
     val todoList: MutableLiveData<List<TodoModel>> = MutableLiveData()
     val itemCountText: MutableLiveData<String> = MutableLiveData()
 
+    var checkedItemList: List<TodoModel> = listOf()
+        set(value) {
+            field = value
+            isItemChecking.value = value.existCheckedItem()
+        }
+
     private lateinit var deleteId: String
-    lateinit var adapter: TodoViewAdapter
 
     private var textValue: CharSequence? = null
     private val repository = MainRepository()
@@ -140,7 +160,7 @@ class MainViewModel : ViewModel(), LifecycleObserver {
         viewModelScope.launch(Dispatchers.Main) {
             isLoading.value = true
             withContext(Dispatchers.Default) {
-                adapter.getCheckedList().forEach {
+                checkedItemList.forEach {
                     // 未完了のアイテムのみ処理する
                     if (!it.todo.isCompleted) {
                         repository.updateCompleted(
@@ -178,8 +198,10 @@ class MainViewModel : ViewModel(), LifecycleObserver {
             } else {
                 todoList.setAllChecked()
             }
+            checkedItemList = todoList.filter { it.isChecked }
         }
-        adapter.notifyDataSetChanged()
+
+        callback.finishAllClear()
     }
 
 

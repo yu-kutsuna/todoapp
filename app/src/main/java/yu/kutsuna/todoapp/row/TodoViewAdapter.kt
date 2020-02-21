@@ -31,7 +31,7 @@ class TodoViewAdapter(
      */
     interface RowEventListener {
         fun clickDeleteIcon(id: String)
-        fun clickCheckBox(isChecked: Boolean)
+        fun clickCheckBox(checkedList: List<TodoModel>)
     }
 
     override fun onCreateViewHolder(
@@ -82,7 +82,7 @@ class TodoViewAdapter(
          */
         todoRowViewModel.checkedPosition.observe(parentLifecycleOwner, Observer { checkedPosition ->
             todoList[checkedPosition].inversionChecked()
-            rowEventListener.clickCheckBox(todoList.existCheckedItem())
+            rowEventListener.clickCheckBox(getCheckedList())
         })
     }
 
