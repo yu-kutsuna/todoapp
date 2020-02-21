@@ -27,11 +27,12 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         // ViewModel取得
-        mainViewModel = ViewModelProviders.of(this, MainViewModel.Factory(object: MainViewModel.Callback {
-            override fun finishAllClear() {
-                binding.recyclerView.adapter?.notifyDataSetChanged()
-            }
-        })).get(MainViewModel::class.java)
+        mainViewModel =
+            ViewModelProviders.of(this, MainViewModel.Factory(object : MainViewModel.Callback {
+                override fun finishAllClear() {
+                    binding.recyclerView.adapter?.notifyDataSetChanged()
+                }
+            })).get(MainViewModel::class.java)
 
         // LiveData監視開始
         mainViewModel.todoList.observe(this, Observer { todoList ->

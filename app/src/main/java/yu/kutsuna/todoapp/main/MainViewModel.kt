@@ -30,7 +30,7 @@ class MainViewModel(private val callback: Callback) : ViewModel(), LifecycleObse
         fun finishAllClear()
     }
 
-    class Factory constructor(private val callback: Callback): ViewModelProvider.Factory {
+    class Factory constructor(private val callback: Callback) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T =
             MainViewModel(callback) as T
