@@ -1,8 +1,10 @@
 package yu.kutsuna.todoapp.main
 
+import android.content.Context
 import android.view.View
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
+import yu.kutsuna.todoapp.R
 import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.extensions.existCheckedItem
@@ -12,7 +14,7 @@ import yu.kutsuna.todoapp.extensions.setAllChecked
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainViewModel(private val callback: Callback) : ViewModel(), LifecycleObserver {
+class MainViewModel(private val callback: Callback, private val context: Context) : ViewModel(), LifecycleObserver {
 
     /**
      * フッター選択状態を判別するためのEnum
@@ -30,10 +32,10 @@ class MainViewModel(private val callback: Callback) : ViewModel(), LifecycleObse
         fun finishAllClear()
     }
 
-    class Factory constructor(private val callback: Callback) : ViewModelProvider.Factory {
+    class Factory constructor(private val callback: Callback, private val context: Context) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-            MainViewModel(callback) as T
+            MainViewModel(callback, context) as T
     }
 
     val selectedType: MutableLiveData<SelectedType> =
@@ -103,7 +105,9 @@ class MainViewModel(private val callback: Callback) : ViewModel(), LifecycleObse
             isLoading.value = true
 
             withContext(Dispatchers.Default) {
-                repository.addTodo(Todo(0, textValue.toString(), false, "Added: ${getNowDate()}"))
+                repository.addTodo(Todo(0, textValue.toString(), false,
+                    context.getString(R.string.added, getNowDate())
+                ))
             }
 
             isLoading.value = false

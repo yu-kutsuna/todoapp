@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
                 override fun finishAllClear() {
                     binding.recyclerView.adapter?.notifyDataSetChanged()
                 }
-            })).get(MainViewModel::class.java)
+            }, this)).get(MainViewModel::class.java)
 
         // LiveData監視開始
         mainViewModel.todoList.observe(this, Observer { todoList ->

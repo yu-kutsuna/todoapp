@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">やること</string>
+    <string name="all_select_button">∨</string>
+    <string name="add_todo_text_hint">"  やることを入力してください"</string>
+    <string name="all">全て</string>
+    <string name="active">やること</string>
+    <string name="completed">完了済</string>
+    <string name="clear_completed">完了</string>
+    <string name="add">追加</string>
+    <string name="delete">×</string>
+    <string name="delete_dialog_message">選択したToDoを削除します</string>
+    <string name="delete_dialog_yes">はい</string>
+    <string name="delete_dialog_no">いいえ</string>
+    <string name="added">追加日時: %s</string>
+</resources>
