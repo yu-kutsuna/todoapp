@@ -72,7 +72,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
      */
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun updateList() {
-        isItemChecking.value = todoList.value?.resetChecked()
+//        isItemChecking.value = todoList.value?.resetChecked()
 
         viewModelScope.launch {
             isLoading.value = true
@@ -91,6 +91,13 @@ class MainViewModel(private val callback: Callback, private val context: Context
                         isListExist.value = this.isNotEmpty()
                     }
                     itemCountText.value = "${this.size} items"
+                }?.map { todo ->
+                    checkedItemList.forEach { checkedTodo ->
+                        if(todo.todo.id == checkedTodo.todo.id) {
+                            todo.isChecked = true
+                        }
+                    }
+                    todo
                 }
 
             isLoading.value = false
@@ -112,6 +119,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
                 ))
             }
 
+            isCheckedAllSelect.value = false
             isLoading.value = false
             updateList()
         }
@@ -167,17 +175,21 @@ class MainViewModel(private val callback: Callback, private val context: Context
     fun clickClear(view: View) {
         viewModelScope.launch(Dispatchers.Main) {
             isLoading.value = true
+            var id = -1L
             withContext(Dispatchers.Default) {
-                checkedItemList.forEach {
+               checkedItemList.forEach {
                     // 未完了のアイテムのみ処理する
                     if (!it.todo.isCompleted) {
                         repository.updateCompleted(
                             it.todo.id.toString(),
                             "Completed: ${getNowDate()}"
                         )
+                        id = it.todo.id
                     }
                 }
             }
+            checkedItemList = checkedItemList.filter { it.todo.id != id }
+
             isLoading.value = false
             updateList()
         }
