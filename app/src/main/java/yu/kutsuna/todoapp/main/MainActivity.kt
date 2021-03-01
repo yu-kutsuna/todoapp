@@ -63,13 +63,6 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             TodoViewAdapter(this,
                 object : TodoViewAdapter.RowEventListener {
                     /**
-                     * 削除ボタン押下時の処理
-                     */
-                    override fun clickDeleteIcon(id: String) {
-                        mainViewModel.clickDeleteIcon(id)
-                    }
-
-                    /**
                      * アイテムのチェックボックス押下時に通知される
                      * チェック済みアイテムの存在可否をチェックしてViewを更新する
                      */

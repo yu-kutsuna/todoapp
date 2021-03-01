@@ -41,6 +41,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
     val selectedType: MutableLiveData<SelectedType> =
         MutableLiveData<SelectedType>().apply { value = SelectedType.ALL }
     val isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    val isCheckedAllSelect: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     val isEmptyAddText: MutableLiveData<Boolean> =
         MutableLiveData<Boolean>().apply { value = true }
     val isViewingDeleteDialog: MutableLiveData<Boolean> =
@@ -55,9 +56,10 @@ class MainViewModel(private val callback: Callback, private val context: Context
         set(value) {
             field = value
             isItemChecking.value = value.existCheckedItem()
+            todoList.value?.let {
+                isCheckedAllSelect.value = it.isAllChecked()
+            }
         }
-
-    private lateinit var deleteId: String
 
     private var textValue: CharSequence? = null
     private val repository = MainRepository()
@@ -117,12 +119,11 @@ class MainViewModel(private val callback: Callback, private val context: Context
 
 
     /**
-     * 削除アイコン押下時の処理
-     * TodoViewAdapterから呼ばれる
+     * 削除ボタン押下時の処理
      * LiveData：isViewingDeleteDialogを更新し、削除確認ダイアログを表示する
      */
-    fun clickDeleteIcon(id: String) {
-        deleteId = id
+
+    fun clickDeleteButton(view: View) {
         isViewingDeleteDialog.value = true
     }
 
@@ -137,10 +138,13 @@ class MainViewModel(private val callback: Callback, private val context: Context
             isLoading.value = true
 
             withContext(Dispatchers.Default) {
-                repository.deleteTodo(deleteId)
+                checkedItemList.forEach {
+                    repository.deleteTodo(it.todo.id.toString())
+                }
             }
 
             isLoading.value = false
+            isCheckedAllSelect.value = false
 
             updateList()
             isViewingDeleteDialog.value = false
@@ -198,8 +202,10 @@ class MainViewModel(private val callback: Callback, private val context: Context
     fun clickAllSelect(view: View) {
         todoList.value?.let { todoList ->
             isItemChecking.value = if (todoList.isAllChecked()) {
+                isCheckedAllSelect.value = false
                 todoList.resetChecked()
             } else {
+                isCheckedAllSelect.value = true
                 todoList.setAllChecked()
             }
             checkedItemList = todoList.filter { it.isChecked }

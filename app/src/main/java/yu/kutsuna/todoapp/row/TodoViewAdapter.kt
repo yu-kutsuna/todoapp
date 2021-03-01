@@ -30,7 +30,6 @@ class TodoViewAdapter(
      * MainActivityに通知する
      */
     interface RowEventListener {
-        fun clickDeleteIcon(id: String)
         fun clickCheckBox(checkedList: List<TodoModel>)
     }
 
@@ -66,14 +65,6 @@ class TodoViewAdapter(
         } else {
             holder.binding.todoValue.clearPaint()
         }
-
-        /**
-         * 削除ボタン押下時の処理
-         * EventListenerからMainActivityに通知する
-         */
-        todoRowViewModel.deleteId.observe(parentLifecycleOwner, Observer {
-            rowEventListener.clickDeleteIcon(it)
-        })
 
 
         /**

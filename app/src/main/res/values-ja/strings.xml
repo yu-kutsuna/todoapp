@@ -8,6 +8,7 @@
     <string name="clear_completed">完了</string>
     <string name="add">追加</string>
     <string name="delete">×</string>
+    <string name="delete_button">削除</string>
     <string name="delete_dialog_message">選択したToDoを削除します</string>
     <string name="delete_dialog_yes">はい</string>
     <string name="delete_dialog_no">いいえ</string>

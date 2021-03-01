@@ -5,9 +5,10 @@
     <string name="all">All</string>
     <string name="active">Active</string>
     <string name="completed">Completed</string>
-    <string name="clear_completed">Clear</string>
+    <string name="clear_completed">Complete</string>
     <string name="add">add</string>
     <string name="delete">×</string>
+    <string name="delete_button">Delete</string>
     <string name="delete_dialog_message">Selected item to remove</string>
     <string name="delete_dialog_yes">OK</string>
     <string name="delete_dialog_no">NG</string>
