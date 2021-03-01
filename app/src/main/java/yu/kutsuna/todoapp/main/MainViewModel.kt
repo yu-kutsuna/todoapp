@@ -188,8 +188,9 @@ class MainViewModel(private val callback: Callback, private val context: Context
                     }
                 }
             }
-            checkedItemList = checkedItemList.filter { it.todo.id != id }
-
+            checkedItemList = listOf()
+            isItemChecking.value = todoList.value?.resetChecked()
+            isCheckedAllSelect.value = false
             isLoading.value = false
             updateList()
         }
