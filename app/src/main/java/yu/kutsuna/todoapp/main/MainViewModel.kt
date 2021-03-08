@@ -7,14 +7,12 @@ import kotlinx.coroutines.*
 import yu.kutsuna.todoapp.R
 import yu.kutsuna.todoapp.data.Todo
 import yu.kutsuna.todoapp.data.TodoModel
-import yu.kutsuna.todoapp.extensions.existCheckedItem
-import yu.kutsuna.todoapp.extensions.isAllChecked
-import yu.kutsuna.todoapp.extensions.resetChecked
-import yu.kutsuna.todoapp.extensions.setAllChecked
+import yu.kutsuna.todoapp.extensions.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainViewModel(private val callback: Callback, private val context: Context) : ViewModel(), LifecycleObserver {
+class MainViewModel(private val callback: Callback, private val context: Context) : ViewModel(),
+    LifecycleObserver {
 
     /**
      * フッター選択状態を判別するためのEnum
@@ -32,7 +30,8 @@ class MainViewModel(private val callback: Callback, private val context: Context
         fun finishAllClear()
     }
 
-    class Factory constructor(private val callback: Callback, private val context: Context) : ViewModelProvider.Factory {
+    class Factory constructor(private val callback: Callback, private val context: Context) :
+        ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T =
             MainViewModel(callback, context) as T
@@ -41,12 +40,15 @@ class MainViewModel(private val callback: Callback, private val context: Context
     val selectedType: MutableLiveData<SelectedType> =
         MutableLiveData<SelectedType>().apply { value = SelectedType.ALL }
     val isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    val isCheckedAllSelect: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    val isCheckedAllSelect: MutableLiveData<Boolean> =
+        MutableLiveData<Boolean>().apply { value = false }
     val isEmptyAddText: MutableLiveData<Boolean> =
         MutableLiveData<Boolean>().apply { value = true }
     val isViewingDeleteDialog: MutableLiveData<Boolean> =
         MutableLiveData<Boolean>().apply { value = false }
     val isItemChecking: MutableLiveData<Boolean> =
+        MutableLiveData<Boolean>().apply { value = false }
+    val isActiveItemChecking: MutableLiveData<Boolean> =
         MutableLiveData<Boolean>().apply { value = false }
     val isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     val todoList: MutableLiveData<List<TodoModel>> = MutableLiveData()
@@ -56,6 +58,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
         set(value) {
             field = value
             isItemChecking.value = value.existCheckedItem()
+            isActiveItemChecking.value = value.existCheckedActiveItem()
             todoList.value?.let {
                 isCheckedAllSelect.value = it.isAllChecked()
             }
@@ -93,7 +96,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
                     itemCountText.value = "${this.size} items"
                 }?.map { todo ->
                     checkedItemList.forEach { checkedTodo ->
-                        if(todo.todo.id == checkedTodo.todo.id) {
+                        if (todo.todo.id == checkedTodo.todo.id) {
                             todo.isChecked = true
                         }
                     }
@@ -114,9 +117,12 @@ class MainViewModel(private val callback: Callback, private val context: Context
             isLoading.value = true
 
             withContext(Dispatchers.Default) {
-                repository.addTodo(Todo(0, textValue.toString(), false,
-                    context.getString(R.string.added, getNowDate())
-                ))
+                repository.addTodo(
+                    Todo(
+                        0, textValue.toString(), false,
+                        context.getString(R.string.added, getNowDate())
+                    )
+                )
             }
 
             isCheckedAllSelect.value = false
@@ -151,8 +157,12 @@ class MainViewModel(private val callback: Callback, private val context: Context
                 }
             }
 
-            isLoading.value = false
+
+            checkedItemList = listOf()
+            isItemChecking.value = todoList.value?.resetChecked()
+            isActiveItemChecking.value = false
             isCheckedAllSelect.value = false
+            isLoading.value = false
 
             updateList()
             isViewingDeleteDialog.value = false
@@ -177,7 +187,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
             isLoading.value = true
             var id = -1L
             withContext(Dispatchers.Default) {
-               checkedItemList.forEach {
+                checkedItemList.forEach {
                     // 未完了のアイテムのみ処理する
                     if (!it.todo.isCompleted) {
                         repository.updateCompleted(
@@ -190,6 +200,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
             }
             checkedItemList = listOf()
             isItemChecking.value = todoList.value?.resetChecked()
+            isActiveItemChecking.value = false
             isCheckedAllSelect.value = false
             isLoading.value = false
             updateList()
@@ -222,6 +233,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
                 todoList.setAllChecked()
             }
             checkedItemList = todoList.filter { it.isChecked }
+            isActiveItemChecking.value = checkedItemList.existCheckedActiveItem()
         }
 
         callback.finishAllClear()

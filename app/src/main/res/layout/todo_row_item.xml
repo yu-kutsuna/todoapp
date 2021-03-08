@@ -24,8 +24,6 @@
             android:layout_margin="10dp"
             android:onClick="@{viewModel::clickCheck}"
             android:checked="@{viewModel.item.isChecked()}"
-            android:enabled="@{viewModel.item.todo.isCompleted()? false : true}"
-            android:visibility="@{viewModel.item.todo.isCompleted()? View.INVISIBLE : View.VISIBLE, default=gone}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

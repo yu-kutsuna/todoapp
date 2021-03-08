@@ -10,14 +10,19 @@ fun List<TodoModel>.existCheckedItem(): Boolean {
 }
 
 /**
+ * チェック済みアクティブアイテムの存在可否をチェックする
+ */
+fun List<TodoModel>.existCheckedActiveItem(): Boolean {
+    return this.any { it.isChecked && !it.todo.isCompleted }
+}
+
+/**
  * TodoModelリストのチェック状態をリセットする
  * return: チェック済みアイテムの存在可否（常にfalse）
  */
 fun List<TodoModel>.resetChecked(): Boolean {
     this.forEach {
-        if (!it.todo.isCompleted) {
-            it.isChecked = false
-        }
+        it.isChecked = false
     }
 
     return false
@@ -29,9 +34,7 @@ fun List<TodoModel>.resetChecked(): Boolean {
  */
 fun List<TodoModel>.setAllChecked(): Boolean {
     this.forEach {
-        if (!it.todo.isCompleted) {
-            it.isChecked = true
-        }
+        it.isChecked = true
     }
 
     return true
@@ -43,5 +46,5 @@ fun List<TodoModel>.setAllChecked(): Boolean {
  * チェック済みでないアイテムが存在する：false
  */
 fun List<TodoModel>.isAllChecked(): Boolean {
-    return this.filter { it.isChecked }.size == this.size - this.filter { it.todo.isCompleted }.size
+    return this.filter { it.isChecked }.size == this.size
 }
