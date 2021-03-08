@@ -40,6 +40,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
     val selectedType: MutableLiveData<SelectedType> =
         MutableLiveData<SelectedType>().apply { value = SelectedType.ALL }
     val isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    val isCurrentTabListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     val isCheckedAllSelect: MutableLiveData<Boolean> =
         MutableLiveData<Boolean>().apply { value = false }
     val isEmptyAddText: MutableLiveData<Boolean> =
@@ -93,6 +94,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
                     if (selectedType.value == SelectedType.ALL) {
                         isListExist.value = this.isNotEmpty()
                     }
+                    isCurrentTabListExist.value = this.isNotEmpty()
                     itemCountText.value = "${this.size} items"
                 }?.map { todo ->
                     checkedItemList.forEach { checkedTodo ->
