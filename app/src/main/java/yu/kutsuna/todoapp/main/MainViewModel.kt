@@ -40,7 +40,8 @@ class MainViewModel(private val callback: Callback, private val context: Context
     val selectedType: MutableLiveData<SelectedType> =
         MutableLiveData<SelectedType>().apply { value = SelectedType.ALL }
     val isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    val isCurrentTabListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
+    val isCurrentTabListExist: MutableLiveData<Boolean> =
+        MutableLiveData<Boolean>().apply { value = false }
     val isCheckedAllSelect: MutableLiveData<Boolean> =
         MutableLiveData<Boolean>().apply { value = false }
     val isEmptyAddText: MutableLiveData<Boolean> =
@@ -194,7 +195,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
                     if (!it.todo.isCompleted) {
                         repository.updateCompleted(
                             it.todo.id.toString(),
-                            "Completed: ${getNowDate()}"
+                            context.getString(R.string.completed_date, getNowDate())
                         )
                         id = it.todo.id
                     }

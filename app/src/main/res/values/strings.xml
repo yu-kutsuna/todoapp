@@ -13,4 +13,5 @@
     <string name="delete_dialog_yes">OK</string>
     <string name="delete_dialog_no">NG</string>
     <string name="added">Added: %s</string>
+    <string name="completed_date">Completed: %s</string>
 </resources>

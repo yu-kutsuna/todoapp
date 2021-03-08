@@ -13,4 +13,5 @@
     <string name="delete_dialog_yes">はい</string>
     <string name="delete_dialog_no">いいえ</string>
     <string name="added">追加日時: %s</string>
+    <string name="completed_date">完了日時: %s</string>
 </resources>

@@ -14,7 +14,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="80dp">
 
 
         <androidx.appcompat.widget.AppCompatCheckBox
@@ -50,6 +50,10 @@
                 android:layout_height="0dp"
                 android:gravity="center_vertical"
                 android:text="@{viewModel.item.todo.value}"
+                android:textSize="16dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMaxTextSize="16dp"
+                android:autoSizeMinTextSize="6dp"
                 app:layout_constraintBottom_toTopOf="@id/date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
