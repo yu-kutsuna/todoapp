@@ -259,6 +259,11 @@ class MainViewModel(private val callback: Callback, private val context: Context
      * リストを更新する
      */
     fun clickActive(view: View) {
+        selectActive()
+    }
+
+    fun selectActive() {
+        if(selectedType.value == SelectedType.ACTIVE) return
         selectedType.value = SelectedType.ACTIVE
         updateList()
     }

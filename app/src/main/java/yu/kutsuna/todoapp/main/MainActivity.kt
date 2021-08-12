@@ -1,8 +1,15 @@
 package yu.kutsuna.todoapp.main
 
+import android.app.ActionBar
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.RemoteViews
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
@@ -10,11 +17,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import yu.kutsuna.todoapp.R
+import yu.kutsuna.todoapp.TodoAppWidgetProvider
 import yu.kutsuna.todoapp.data.TodoModel
 import yu.kutsuna.todoapp.databinding.ActivityMainBinding
-import yu.kutsuna.todoapp.extensions.existCheckedItem
 import yu.kutsuna.todoapp.extensions.hideKeyboard
 import yu.kutsuna.todoapp.row.TodoViewAdapter
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity(), LifecycleOwner {
@@ -37,6 +45,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         // LiveData監視開始
         mainViewModel.todoList.observe(this, Observer { todoList ->
             (binding.recyclerView.adapter as TodoViewAdapter).update(todoList)
+            val widgetIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE).apply {
+                component = ComponentName(applicationContext, TodoAppWidgetProvider::class.java)
+            }
+            sendBroadcast(widgetIntent)
+
             binding.todoText.setText("")
             hideKeyboard()
         })
@@ -72,5 +85,20 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
                 }
             )
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
+
+        if(intent.action != null && intent.action == ACTION_FROM_WIDGET) {
+            mainViewModel.selectActive()
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if(intent?.action != null && intent.action == ACTION_FROM_WIDGET) {
+            mainViewModel.selectActive()
+        }
+    }
+
+    companion object {
+        const val ACTION_FROM_WIDGET = "ACTION_FROM_WIDGET"
     }
 }
