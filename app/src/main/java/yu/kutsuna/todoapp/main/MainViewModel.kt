@@ -283,7 +283,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
      */
     private fun getAllTodoList(): List<TodoModel> {
         val todoModelList = mutableListOf<TodoModel>()
-        repository.getTodoList().reversed().forEach {
+        repository.getTodoList().forEach {
             todoModelList.add(TodoModel(it, false))
         }
         return todoModelList

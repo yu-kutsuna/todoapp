@@ -17,7 +17,7 @@ class TodoAppWidgetFactory : RemoteViewsService.RemoteViewsFactory {
 
     fun getTodoList(): Deferred<List<Todo>> {
         return GlobalScope.async {
-            return@async db.findActiveItem().reversed()
+            return@async db.findActiveItem()
         }
     }
 
