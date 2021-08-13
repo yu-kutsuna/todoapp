@@ -26,6 +26,5 @@
         android:background="@drawable/shape_round_bottom_corner"
         android:orientation="vertical"
         android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        tools:listitem="@layout/todo_widget_row_item"/>
+        android:paddingEnd="20dp" />
 </LinearLayout>

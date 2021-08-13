@@ -1,5 +1,6 @@
 package yu.kutsuna.todoapp
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Binder
@@ -46,6 +47,7 @@ class TodoAppWidgetFactory : RemoteViewsService.RemoteViewsFactory {
         return true
     }
 
+    @SuppressLint("RemoteViewLayout")
     override fun getViewAt(p0: Int): RemoteViews? {
         if(p0 == AdapterView.INVALID_POSITION) return null
 
