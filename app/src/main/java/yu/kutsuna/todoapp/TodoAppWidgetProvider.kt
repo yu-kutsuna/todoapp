@@ -36,7 +36,7 @@ class TodoAppWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent)
 
-        when(intent?.action) {
+        when (intent?.action) {
             AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {
                 context?.let { ct ->
                     val manager = AppWidgetManager.getInstance(ct)
@@ -54,14 +54,22 @@ class TodoAppWidgetProvider : AppWidgetProvider() {
         appWidgetId: Int
     ) {
         // Construct the RemoteViews object
-        val clickIntentTemplate = Intent(context, MainActivity::class.java).apply { action = MainActivity.ACTION_FROM_WIDGET }
+        val clickIntentTemplate = Intent(context, MainActivity::class.java).apply {
+            action = MainActivity.ACTION_FROM_WIDGET
+            putExtra(MainActivity.EXTRA_KEY_FROM_WIDGET, true)
+        }
         val views = RemoteViews(context.packageName, R.layout.todo_app_widget)
         val widgetServiceIntent = Intent(context, TodoAppWidgetService::class.java)
-        views.setOnClickPendingIntent(R.id.title, PendingIntent.getActivity(context, 0, clickIntentTemplate, 0))
+        views.setOnClickPendingIntent(
+            R.id.title,
+            PendingIntent.getActivity(context, 0, clickIntentTemplate, 0)
+        )
         views.setRemoteAdapter(R.id.widget_todo_list, widgetServiceIntent)
 
         // リストアイテムクリックリスナーの設定
-        val clickPendingIntentTemplate = TaskStackBuilder.create(context).addNextIntentWithParentStack(clickIntentTemplate).getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+        val clickPendingIntentTemplate =
+            TaskStackBuilder.create(context).addNextIntentWithParentStack(clickIntentTemplate)
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
         views.setPendingIntentTemplate(R.id.widget_todo_list, clickPendingIntentTemplate)
 
         // Instruct the widget manager to update the widget

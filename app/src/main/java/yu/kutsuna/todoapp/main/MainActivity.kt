@@ -81,6 +81,15 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
                     binding.recyclerView.adapter?.notifyDataSetChanged()
                 }
             }, this)).get(MainViewModel::class.java)
+        mainViewModel.selectedType.value =
+            if (intent.action != null && (intent.action == ACTION_FROM_WIDGET || intent.getBooleanExtra(
+                    EXTRA_KEY_FROM_WIDGET, false
+                )) && mainViewModel.selectedType.value != MainViewModel.SelectedType.ACTIVE
+            ) {
+                MainViewModel.SelectedType.ACTIVE
+            } else {
+                MainViewModel.SelectedType.ALL
+            }
 
         // LiveData監視開始
         mainViewModel.todoList.observe(this, Observer { todoList ->
@@ -126,20 +135,19 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             )
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
 
-        if (intent.action != null && intent.action == ACTION_FROM_WIDGET) {
-            mainViewModel.selectActive()
-        }
+        mainViewModel.updateList()
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent?.action != null && intent.action == ACTION_FROM_WIDGET) {
-            mainViewModel.selectActive()
+            mainViewModel.selectedType.postValue(MainViewModel.SelectedType.ACTIVE)
         }
     }
 
     companion object {
         const val ACTION_FROM_WIDGET = "ACTION_FROM_WIDGET"
+        const val EXTRA_KEY_FROM_WIDGET = "EXTRA_KEY_FROM_WIDGET"
         const val TAG = "MainActivity"
     }
 }

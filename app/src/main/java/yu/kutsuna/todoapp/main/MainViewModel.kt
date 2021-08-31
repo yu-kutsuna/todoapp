@@ -38,7 +38,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
     }
 
     val selectedType: MutableLiveData<SelectedType> =
-        MutableLiveData<SelectedType>().apply { value = SelectedType.ALL }
+        MutableLiveData<SelectedType>()
     val isListExist: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     val isCurrentTabListExist: MutableLiveData<Boolean> =
         MutableLiveData<Boolean>().apply { value = false }
@@ -75,10 +75,9 @@ class MainViewModel(private val callback: Callback, private val context: Context
      * ALLの場合のみ、フッター表示制御のためにLiveData:isListExitを更新する
      * リストが存在した場合はitemカウント数用のLiveDataも更新する
      */
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    private fun updateList() {
+    fun updateList() {
 //        isItemChecking.value = todoList.value?.resetChecked()
-
+        if (isLoading.value == true) return
         viewModelScope.launch {
             isLoading.value = true
 
@@ -94,6 +93,9 @@ class MainViewModel(private val callback: Callback, private val context: Context
                 }?.apply {
                     if (selectedType.value == SelectedType.ALL) {
                         isListExist.value = this.isNotEmpty()
+                    }
+                    if (selectedType.value == SelectedType.ACTIVE) {
+                        isListExist.value = true
                     }
                     isCurrentTabListExist.value = this.isNotEmpty()
                     itemCountText.value = "${this.size} items"
@@ -263,7 +265,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
     }
 
     fun selectActive() {
-        if(selectedType.value == SelectedType.ACTIVE) return
+        if (selectedType.value == SelectedType.ACTIVE) return
         selectedType.value = SelectedType.ACTIVE
         updateList()
     }
