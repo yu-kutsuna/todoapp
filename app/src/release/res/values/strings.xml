@@ -1,4 +1,6 @@
 <resources>
-    <string name="admob_app_id">ca-app-pub-7731409646421830~3912524076</string>
-    <string name="admob_app_id_for_layout">ca-app-pub-7731409646421830/7947972009</string>
+    <string name="admob_app_id"
+        translatable="false">ca-app-pub-7731409646421830~3912524076</string>
+    <string name="admob_app_id_for_layout"
+        translatable="false">ca-app-pub-7731409646421830/7947972009</string>
 </resources>
