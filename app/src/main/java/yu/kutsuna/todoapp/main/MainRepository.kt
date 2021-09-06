@@ -9,8 +9,16 @@ class MainRepository {
         return db.findAll()
     }
 
+    fun getUpdateDate(id: String): String {
+        return db.findUpdateDate(id)
+    }
+
     fun updateCompleted(id: String, date: String) {
         db.updateCompleted(id, date)
+    }
+
+    fun undoCompleted(id: String, date: String) {
+        db.undoCompleted(id, date)
     }
 
     fun addTodo(todo: Todo) {

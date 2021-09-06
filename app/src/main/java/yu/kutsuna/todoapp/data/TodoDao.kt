@@ -13,8 +13,14 @@ interface TodoDao {
     @Query("SELECT * From Todo Where isCompleted = 0")
     fun findActiveItem(): List<Todo>
 
+    @Query("SELECT updateDate From Todo Where id = :id")
+    fun findUpdateDate(id: String): String
+
     @Query("UPDATE Todo SET isCompleted = 1, updateDate = :updateDate WHERE id = :id")
     fun updateCompleted(id: String, updateDate: String)
+
+    @Query("UPDATE Todo SET isCompleted = 0, updateDate = :updateDate WHERE id = :id")
+    fun undoCompleted(id: String, updateDate: String)
 
     @Query("DELETE FROM Todo WHERE id = :id")
     fun delete(id: String)

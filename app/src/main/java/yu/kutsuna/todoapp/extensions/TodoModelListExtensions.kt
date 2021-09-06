@@ -17,6 +17,13 @@ fun List<TodoModel>.existCheckedActiveItem(): Boolean {
 }
 
 /**
+ * チェック済み完了アイテムの存在可否をチェックする
+ */
+fun List<TodoModel>.existCheckedCompletedItem(): Boolean {
+    return this.any { it.isChecked && it.todo.isCompleted }
+}
+
+/**
  * TodoModelリストのチェック状態をリセットする
  * return: チェック済みアイテムの存在可否（常にfalse）
  */

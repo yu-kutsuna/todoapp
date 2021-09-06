@@ -52,6 +52,8 @@ class MainViewModel(private val callback: Callback, private val context: Context
         MutableLiveData<Boolean>().apply { value = false }
     val isActiveItemChecking: MutableLiveData<Boolean> =
         MutableLiveData<Boolean>().apply { value = false }
+    val isCompletedItemChecking: MutableLiveData<Boolean> =
+        MutableLiveData<Boolean>().apply { value = false }
     val isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
     val todoList: MutableLiveData<List<TodoModel>> = MutableLiveData()
     val itemCountText: MutableLiveData<String> = MutableLiveData()
@@ -61,6 +63,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
             field = value
             isItemChecking.value = value.existCheckedItem()
             isActiveItemChecking.value = value.existCheckedActiveItem()
+            isCompletedItemChecking.value = value.existCheckedCompletedItem()
             todoList.value?.let {
                 isCheckedAllSelect.value = it.isAllChecked()
             }
@@ -197,7 +200,37 @@ class MainViewModel(private val callback: Callback, private val context: Context
                     if (!it.todo.isCompleted) {
                         repository.updateCompleted(
                             it.todo.id.toString(),
-                            context.getString(R.string.completed_date, getNowDate())
+                            "${repository.getUpdateDate(it.todo.id.toString())},  ${context.getString(R.string.completed_date, getNowDate())}"
+                        )
+                        id = it.todo.id
+                    }
+                }
+            }
+            checkedItemList = listOf()
+            isItemChecking.value = todoList.value?.resetChecked()
+            isActiveItemChecking.value = false
+            isCheckedAllSelect.value = false
+            isLoading.value = false
+            updateList()
+        }
+    }
+
+    /**
+     * 元に戻すボタン押下時の処理
+     * Repositoryから該当アイテムを完了済みにし、
+     * リストを更新する
+     */
+    fun clickUndo(view: View) {
+        viewModelScope.launch(Dispatchers.Main) {
+            isLoading.value = true
+            var id = -1L
+            withContext(Dispatchers.Default) {
+                checkedItemList.forEach {
+                    // 完了済のアイテムのみ処理する
+                    if (it.todo.isCompleted) {
+                        repository.undoCompleted(
+                            it.todo.id.toString(),
+                            context.getString(R.string.undo_date, getNowDate())
                         )
                         id = it.todo.id
                     }
