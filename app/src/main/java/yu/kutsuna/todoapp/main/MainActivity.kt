@@ -64,7 +64,6 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             override fun onAdLoaded() {
                 super.onAdLoaded()
                 Log.d(TAG, "AdMob onAdLoaded")
-                binding.adProgress.visibility = View.GONE
             }
 
             override fun onAdOpened() {
