@@ -33,7 +33,7 @@ class MainViewModel(private val callback: Callback, private val context: Context
     class Factory constructor(private val callback: Callback, private val context: Context) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+        override fun <T : ViewModel> create(modelClass: Class<T>): T =
             MainViewModel(callback, context) as T
     }
 
